@@ -1,24 +1,55 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from modelResource import Resource
-from modelCategory import Category
-from modelConfiguration import Configuration
-from modelCustomer import Customer
+from database import DataBase
 
 app = Flask(__name__)
 CORS(app)
 
-resources = []
-resources.append(Resource("r1", "system", "sys", "saber", "Software", 10, 2))
-configurations = []
-configurations.append(Configuration("c1", "config1", "configuration1", resources))
-categories = []
-categories.append(Category("a1", "ctg1", "dsc1", "carga1", configurations))
-#categories.append(Category("a2", "ctg2", "dsc2", "carga2","configuracion2"))
-customers = []
-customers.append(Customer("21349", "Juan", "20 calle zona 1", "juan@email.com", "jn", "123", None))
+db = DataBase()
+db.readConfigurationFile("files/archivoConfiguraciones.xml")
+#r1 = {'id': 'r1', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Hardware', 'valorXhora': '10'}
+#r2 = {'id': 'r2', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Software', 'valorXhora': '25'}
+#db.newResource(r1)
+#db.newResource(r2)
 
-@app.route("/categoria", methods=["POST"])
+@app.route("/nuevoRecurso", methods=["POST"])
+def create_resource():
+    data = request.get_json()
+    response = db.newResource(data)
+    if response:
+        return jsonify(request.get_json()), 201
+    else:
+        return jsonify({"mensaje": "Recurso repetido"}), 400
+
+
+@app.route("/recursos")
+def get_resources():
+    rsc = db.getResources()
+    return jsonify({"recursos":rsc}), 200
+
+@app.route("/editarRecurso", methods=["PUT"])
+def update_resource():
+    #data = request.args.get("id")
+    data = request.get_json()
+    id = data["id"]
+    name = data["nombre"]
+    abbreviation = data["abreviatura"]
+    metric = data["metrica"]
+    type = data["tipo"]
+    value = data["valorXhora"]
+    response = db.updateResource(id, name, abbreviation, metric, type, value, None)
+    if response:
+        return jsonify({"mensaje": "Recurso actualizado"}), 200
+
+@app.route("/eliminarRecurso", methods=["DELETE"])
+def delete_resource():
+    data = request.get_json()
+    id = data["id"]
+    response = db.deleteResource(id)
+    if response:
+        return jsonify({"mensaje": "Recurso eliminada"}), 200
+
+'''@app.route("/categoria", methods=["POST"])
 def create_category():
     data = request.get_json()
     id = data["id"]
@@ -74,56 +105,18 @@ def delete_category():
             categories.remove(category)
     return jsonify({"mensaje": "Categoria eliminada"}), 200
 
-@app.route("/recurso", methods=["POST"])
-def create_resource():
+@app.route("/configuracion", methods=["POST"])
+def create_configuration():
     data = request.get_json()
     id = data["id"]
     name = data["nombre"]
-    abbreviation = data["abreviatura"]
-    metric = data["metrica"]
-    type = data["tipo"]
-    value = data["valorXhora"]
-    for resource in resources:
-        if resource.getId() == id:
-            return jsonify({"mensaje": "Recurso repetido"}), 400
-    categories.append(Category(id, name, abbreviation, metric, type, value))
+    description = data["descripcion"]
+    resources = data["recursosConfiguracion"]
+    for configuration in configurations:
+        if configuration.getId() == id:
+            return jsonify({"mensaje": "Configuracion repetida"}), 400
+    configurations.append(Configuration(id, name, description, resources))
     return jsonify(request.get_json()), 201
-
-@app.route("/recurso", methods=["GET"])
-def get_resource():
-    tmp = []
-    for resource in resources:
-        tmp.append({"id": resource.getId(), "nombre": resource.getName(), "abreviatura": resource.getAbbreviation(),
-        "metrica": resource.getMetricName(), "tipo": resource.getType(), "valorXhora": resource.getNumericalValue()})
-    return jsonify(tmp), 200
-
-@app.route("/recurso", methods=["PUT"])
-def update_update():
-    #data = request.args.get("id")
-    data = request.get_json()
-    id = data["id"]
-    name = data["nombre"]
-    abbreviation = data["abreviatura"]
-    metric = data["metrica"]
-    type = data["tipo"]
-    value = data["valorXhora"]
-    for resource in resources:
-        if resource.getId() == id:
-            resource.setName(name)
-            resource.setAbbreviation(abbreviation)
-            resource.setMetricName(metric)
-            resource.setType(type)
-            resource.setNumericalValue(value)
-    return jsonify({"mensaje": "Recurso actualizado"}), 200
-
-@app.route("/recurso", methods=["DELETE"])
-def delete_resource():
-    data = request.get_json()
-    id = data["id"]
-    for resource in resources:
-        if resource.getId() == id:
-            resources.remove(resource)
-    return jsonify({"mensaje": "Recurso eliminada"}), 200
 
 @app.route("/cliente", methods=["POST"])
 def create_customer():
@@ -151,3 +144,18 @@ def get_customer():
         #for instance in instances:
             #cnf.append({"id": configuration.getId(), "nombre": configuration.getName(), "descripcion": configuration.getDescription()})
     return jsonify(tmp), 200
+
+@app.route("/instancia", methods=["POST"])
+def create_instance():
+    data = request.get_json()
+    id = data["id"]
+    idCategory = data["idCategoria"]
+    name = data["nombre"]
+    dateStart = data["fechaInicio"]
+    state = data["estado"]
+    dateEnd = data["fechaFinal"]
+    for instance in instances:
+        if instance.getId() == id:
+            return jsonify({"mensaje": "Instancia repetida"}), 400
+    instances.append(Instance(id, name, idCategory, dateStart, state, dateEnd))
+    return jsonify(request.get_json()), 201'''

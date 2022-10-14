@@ -1,0 +1,44 @@
+{% extends "headerResources.html" %}
+
+{% block title %} Recursos {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        Crear Nuevo Recurso
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos del libro</h4>
+
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="" class="form-label">ID</label>
+                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID">
+                <label for="" class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre">
+                <label for="" class="form-label">Abreviatura</label>
+                <input type="text" class="form-control" name="abreviatura" id="" aria-describedby="helpId" placeholder="Abreviatura">
+                <label for="" class="form-label">Metrica</label>
+                <input type="text" class="form-control" name="metrica" id="" aria-describedby="helpId" placeholder="Metrica">
+                <label for="" class="form-label">Tipo</label>
+                <input type="text" class="form-control" name="tipo" id="" aria-describedby="helpId" placeholder="tipo">
+                <label for="" class="form-label">Valor/Hora</label>
+                <input type="text" class="form-control" name="valorXhora" id="" aria-describedby="helpId" placeholder="valor">
+            </div>
+            
+            <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
+            <a name="" id="" class="btn btn-danger" href="{% url 'recursos' %}" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+</div>
+
+{% endblock %}
+
+<!--{% include 'formulario.html' %}-->
