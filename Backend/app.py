@@ -31,15 +31,8 @@ def get_resources():
 
 @app.route("/editarRecurso", methods=["PUT"])
 def update_resource():
-    #data = request.args.get("id")
     data = request.get_json()
-    id = data["id"]
-    name = data["nombre"]
-    abbreviation = data["abreviatura"]
-    metric = data["metrica"]
-    type = data["tipo"]
-    value = data["valorXhora"]
-    response = db.updateResource(id, name, abbreviation, metric, type, value, None)
+    response = db.updateResource(data)
     if response:
         return jsonify({"mensaje": "Recurso actualizado"}), 200
 
