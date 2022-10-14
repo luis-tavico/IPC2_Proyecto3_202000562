@@ -9,8 +9,10 @@ db = DataBase()
 db.readConfigurationFile("files/archivoConfiguraciones.xml")
 #r1 = {'id': 'r1', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Hardware', 'valorXhora': '10'}
 #r2 = {'id': 'r2', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Software', 'valorXhora': '25'}
+#r2 = {'id': 'r3', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Hardware', 'valorXhora': '25'}
 #db.newResource(r1)
 #db.newResource(r2)
+#db.newResource(r3)
 
 @app.route("/nuevoRecurso", methods=["POST"])
 def create_resource():
