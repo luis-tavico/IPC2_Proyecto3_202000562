@@ -5,7 +5,7 @@ import json
 from .forms import Form
 end_point='http://127.0.0.1:5000/'
 
-def resources(request):
+def getResources(request):
     global resources
     resources = requests.get(end_point+'recursos')
     resources = resources.content.decode('utf-8')

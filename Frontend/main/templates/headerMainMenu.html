@@ -19,18 +19,63 @@
 
 <body>
 
-    <nav class="navbar navbar-expand navbar-light bg-light">
-        <div class="nav navbar-nav">
-            <a class="nav-item nav-link active" href="{% url 'inicio' %}">Inicio</a>
-            <a class="nav-item nav-link active" href="{% url 'recursos' %}">Recursos</a>
-            <a class="nav-item nav-link active" href="#">Configuraciones</a>
-            <a class="nav-item nav-link active" href="#">Clientes</a>
+<!--<nav class="navbar navbar-expand navbar-light bg-light">
+    <div class="nav navbar-nav">
+        <a class="nav-item nav-link active" href="{% url 'inicio' %}">Inicio</a>
+        <a class="nav-item nav-link active" href="{% url 'archivoConfiguracion' %}">Archivos</a>
+        <a class="nav-item nav-link active" href="{% url 'recursos' %}">Recursos</a>
+        <a class="nav-item nav-link active" href="#">Categorias</a>
+        <a class="nav-item nav-link active" href="#">Configuraciones</a>
+        <a class="nav-item nav-link active" href="#">Clientes</a>
+        <a class="nav-item nav-link active" href="#">Instancias</a>
+    </div>
+</nav>-->
+    
+
+    <nav class="navbar navbar-expand-lg bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'inicio' %}">Inicio</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Archivo
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'archivoConfiguracion' %}">Archivo Configuracion</a></li>
+                <li><a class="dropdown-item" href="{% url 'archivoConsumos' %}">Archivo Consumos</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'recursos' %}">Recursos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Categorias</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Configuraciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Instancias</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Documentacion</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
     
     <div class="container">
         <div class="row">
             <div class="col-12">
+              <br/>
                 {% block container %}  {% endblock %}
             </div>
         </div>

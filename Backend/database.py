@@ -80,11 +80,71 @@ class DataBase:
             time = consumption.find('tiempo').text
             dateAndHour = consumption.find('fechaHora').text
 
-    def saveChangesInFileConfigurations(self, rsc):
-        file_xml = ET.parse(self.pathFileConfigurations)
+    def loadData(self):
+        try:
+            file_xml = ET.parse("./database.xml")
+            database = file_xml.getroot()
+        except FileNotFoundError:
+            database = ET.tostring(ET.Element('database'))
+            file_xml = open("./database.xml", "wb")
+            file_xml.write(database)  
+            file_xml.close()
+            file_xml = ET.parse("./database.xml")
+            database = file_xml.getroot()
+        #file_xml.write("./database.xml")
+
+    def createDataBase(self):
+        fileConfigurations = ET.tostring(ET.Element('archivoConfiguraciones'))
+        file_xml = open("./database.xml", "wb")
+        file_xml.write(fileConfigurations)  
+        file_xml.close()
+
+        file_xml = ET.parse("./database.xml")
         fileConfigurations = file_xml.getroot() 
 
-        listResources = fileConfigurations.find('listaRecursos')
+        listResources = ET.Element('listaRecursos')
+        """for rsc in self.resources:
+            resource = ET.SubElement(listResources, 'recurso')
+            resource.set("id", rsc["id"])
+            nameResource = ET.SubElement(resource, 'nombre')
+            nameResource.text = rsc["nombre"]
+            abbreviationResource = ET.SubElement(resource, 'abreviatura')
+            abbreviationResource.text = rsc["abreviatura"]
+            metricsResource = ET.SubElement(resource, 'metrica')
+            metricsResource.text = rsc["metrica"]
+            typeResource = ET.SubElement(resource, 'tipo')
+            typeResource.text = rsc["tipo"]
+            valueResource = ET.SubElement(resource, 'valorXhora')
+            valueResource.text = str(rsc["valorXhora"])"""
+
+        listCategories = ET.Element('listaCategorias')
+        listCustomers = ET.Element('listaClientes')
+
+        fileConfigurations.append(listResources)
+        fileConfigurations.append(listCategories)
+        fileConfigurations.append(listCustomers)
+
+        file_xml.write("./database.xml")
+
+
+
+    ################################ RESOURCES ################################
+    def newResource(self, rsc):
+        for resource in self.resources:
+            if resource['id'] == id:
+                return False
+        self.resources.append(rsc)
+        self.saveNewResource(rsc)
+        return True
+
+    def saveNewResource(self, rsc):
+        file_xml = ET.parse("./database.xml")
+        database = file_xml.getroot() 
+
+        listResources = database.find('listaRecursos')
+        if listResources == None:
+            listResources = ET.Element('listaRecursos')
+            database.append(listResources)
 
         resource = ET.SubElement(listResources, 'recurso')
         resource.set("id", rsc["id"])
@@ -99,33 +159,48 @@ class DataBase:
         valueResource = ET.SubElement(resource, 'valorXhora')
         valueResource.text = str(rsc["valorXhora"])
 
-        #listResources.append(resource)
+        file_xml.write("./database.xml")
 
-        file_xml.write(self.pathFileConfigurations)
+    def updateResource(self, rsc):
+        for resource in self.resources:
+            if resource['id'] == rsc["id"]:
+                index = self.resources.index(resource)                
+                self.resources[index] = rsc
+                self.saveUpdateResource(rsc)
+                return True
+        return False
 
-    def edit(self, rsc):
-        file_xml = ET.parse(self.pathFileConfigurations)
-        fileConfigurations = file_xml.getroot() 
+    def saveUpdateResource(self, rsc):
+        file_xml = ET.parse("./database.xml")
+        database = file_xml.getroot() 
 
-        for listResources in fileConfigurations.findall('listaRecursos'):
+        for listResources in database.findall('listaRecursos'):
             for resource in listResources:
                 idResource = resource.attrib['id']
                 if idResource == rsc["id"]:
                     nameResource = resource.find('nombre')
                     nameResource.text = rsc["nombre"]
-                    #nameResource.set("nombre", rsc["nombre"])
-                    """abbreviationResource = ET.SubElement(resource, 'abreviatura')
+                    abbreviationResource = resource.find('abreviatura')
                     abbreviationResource.text = rsc["abreviatura"]
-                    metricsResource = ET.SubElement(resource, 'metrica')
+                    metricsResource = resource.find('metrica')
                     metricsResource.text = rsc["metrica"]
-                    typeResource = ET.SubElement(resource, 'tipo')
+                    typeResource = resource.find('tipo')
                     typeResource.text = rsc["tipo"]
-                    valueResource = ET.SubElement(resource, 'valorXhora')
-                    valueResource.text = str(rsc["valorXhora"])"""
+                    valueResource = resource.find('valorXhora')
+                    valueResource.text = rsc["valorXhora"]
 
                     file_xml.write(self.pathFileConfigurations)
 
-    def delete(self, rsc):
+    def deleteResource(self, id):
+        for resource in self.resources:
+            if resource['id'] == id:
+                index = self.resources.index(resource)
+                self.saveDeleteResource(id)
+                self.resources.pop(index)
+                return True
+        return False
+
+    def saveDeleteResource(self, rsc):
         file_xml = ET.parse(self.pathFileConfigurations)
         fileConfigurations = file_xml.getroot() 
 
@@ -136,38 +211,18 @@ class DataBase:
                     listResources.remove(resource)
 
                     file_xml.write(self.pathFileConfigurations)
-
-
-    def newResource(self, rsc):
-        for resource in self.resources:
-            if resource['id'] == id:
-                return False
-        self.resources.append(rsc)
-        self.saveChangesInFileConfigurations(rsc)
-        return True
-
+                    
     def getResources(self):
         return self.resources
 
-    def updateResource(self, rsc):
-        for resource in self.resources:
-            if resource['id'] == rsc["id"]:
-                index = self.resources.index(resource)                
-                self.resources[index] = (rsc)
-                return True
-        return False
+   ################################ CATEGORIES ################################
 
-    def deleteResource(self, id):
-        for resource in self.resources:
-            if resource['id'] == id:
-                index = self.resources.index(resource)
-                self.resources.pop(index)
-                return True
-        return False
+
 
 #db.readConsumptionFile("consumptionList.xml")
-"""db = DataBase()
-db.readConfigurationFile("files/archivoConfiguraciones.xml")
+#db = DataBase()
+#db.loadData()
+"""db.readConfigurationFile("files/archivoConfiguraciones.xml")
 resource = {"id":"r1", "nombre":"system", "abreviatura":"sys",
                 "metrica":"saber", "tipo":"Software", "valorXhora":"30"}
 db.newResource(resource)

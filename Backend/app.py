@@ -6,6 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 db = DataBase()
+#db.loadData()
 db.readConfigurationFile("files/archivoConfiguraciones.xml")
 #r1 = {'id': 'r1', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Hardware', 'valorXhora': '10'}
 #r2 = {'id': 'r2', 'nombre': 'system', 'abreviatura': 'sys', 'metrica': 'saber', 'tipo': 'Software', 'valorXhora': '25'}
@@ -13,6 +14,11 @@ db.readConfigurationFile("files/archivoConfiguraciones.xml")
 #db.newResource(r1)
 #db.newResource(r2)
 #db.newResource(r3)
+
+@app.route("/recursos")
+def get_resources():
+    rsc = db.getResources()
+    return jsonify({"recursos":rsc}), 200
 
 @app.route("/nuevoRecurso", methods=["POST"])
 def create_resource():
@@ -22,12 +28,6 @@ def create_resource():
         return jsonify(request.get_json()), 201
     else:
         return jsonify({"mensaje": "Recurso repetido"}), 400
-
-
-@app.route("/recursos")
-def get_resources():
-    rsc = db.getResources()
-    return jsonify({"recursos":rsc}), 200
 
 @app.route("/editarRecurso", methods=["PUT"])
 def update_resource():
