@@ -40,7 +40,7 @@ def editResource(request, id):
 def deleteResource(request, id):
     id = {"id":id}
     print(id)
-    requests.delete(end_point+'eliminarRecurso', json=id)  
+    requests.delete(end_point+'eliminarRecurso', json=id)   
     return redirect('recursos')
 
 def search_resource(id):

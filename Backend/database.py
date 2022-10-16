@@ -11,21 +11,19 @@ class DataBase:
         self.instances = []
         self.customers = []
 
-    def readConfigurationFile(self, path):
-        self.pathFileConfigurations = path
-        file_xml = ET.parse(self.pathFileConfigurations)
-        fileConfigurations = file_xml.getroot()
+    def readConfigurationFile(self, xml_content):
+        fileConfigurations = ET.fromstring(xml_content)
 
-        for listResources in fileConfigurations.findall('listaRecursos'):
-            for resource in listResources:
-                idResource = resource.attrib['id']
-                nameResourse = resource.find('nombre').text
-                abbreviationResource = resource.find('abreviatura').text
-                metricsResource = resource.find('metrica').text
-                typeResource = resource.find('tipo').text
-                valuexHour = resource.find('valorXhora').text
-                self.resources.append({"id":idResource, "nombre":nameResourse, "abreviatura":abbreviationResource,
-                "metrica":metricsResource, "tipo":typeResource, "valorXhora":valuexHour})
+        listResources = fileConfigurations.find('listaRecursos')
+        for resource in listResources:
+            idResource = resource.attrib['id']
+            nameResourse = resource.find('nombre').text
+            abbreviationResource = resource.find('abreviatura').text
+            metricsResource = resource.find('metrica').text
+            typeResource = resource.find('tipo').text
+            valuexHour = resource.find('valorXhora').text
+            self.resources.append({"id":idResource, "nombre":nameResourse, "abreviatura":abbreviationResource,
+            "metrica":metricsResource, "tipo":typeResource, "valorXhora":valuexHour})
 
         for listCategories in fileConfigurations.findall('listaCategorias'):
             for category in listCategories:
@@ -69,16 +67,18 @@ class DataBase:
             self.customers.append({"nit": nitCustomer, "nombre": nameCustomer, "direccion": addresCustomer, "correo electronico": emailCustomer, 
             "usuario": userCustomer, "clave": keyCustomer, "instancias":instances})
 
-    def readConsumptionFile(self, path):
-        self.pathFileConsumptions = path
-        file_xml = ET.parse(self.pathFileConsumptions)
-        listConsumptions = file_xml.getroot()
+    def readConsumptionFile(self, xml_content):
+        listConsumptions = ET.fromstring(xml_content)
 
         for consumption in listConsumptions:
             idCustomer = consumption.attrib['nitCliente']
+            print(idCustomer)
             idInstance = consumption.attrib['idInstancia']
+            print(idInstance)
             time = consumption.find('tiempo').text
+            print(time)
             dateAndHour = consumption.find('fechaHora').text
+            print(dateAndHour)
 
     def loadData(self):
         try:
@@ -218,8 +218,6 @@ class DataBase:
    ################################ CATEGORIES ################################
 
 
-
-#db.readConsumptionFile("consumptionList.xml")
 #db = DataBase()
 #db.loadData()
 """db.readConfigurationFile("files/archivoConfiguraciones.xml")
@@ -232,3 +230,17 @@ db.newResource(resource)
 resource = {"id":"r2", "nombre":"system", "abreviatura":"sys",
                 "metrica":"saber", "tipo":"Hardware", "valorXhora":"50"}
 db.delete(resource)"""
+
+
+#db = DataBase()
+xml_content = """<listadoConsumos>
+<consumo nitCliente="$nit" idInstancia="$id">
+<tiempo> tiempoConsumido </tiempo>
+<fechaHora> $descripcionFechaHora </fechaHora>
+</consumo>
+<consumo nitCliente="cliente1" idInstancia="instancia1">
+<tiempo> 10 </tiempo>
+<fechaHora> 12 </fechaHora>
+</consumo>
+</listadoConsumos>"""
+#db.readConsumptionFile(xml_content)

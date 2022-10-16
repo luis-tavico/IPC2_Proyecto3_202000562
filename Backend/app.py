@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import DataBase
+import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
 CORS(app)
@@ -43,6 +44,14 @@ def delete_resource():
     response = db.deleteResource(id)
     if response:
         return jsonify({"mensaje": "Recurso eliminada"}), 200
+
+@app.route("/archivoConfiguracion", methods=["POST"])
+def file_configuration():
+    xml_content = request.get_data()
+    xml_content = xml_content.decode('UTF-8')
+    fileConfigurations = ET.fromstring(xml_content)
+    print(fileConfigurations)
+    return jsonify({"mensaje": "Recibido"}), 200
 
 '''@app.route("/categoria", methods=["POST"])
 def create_category():

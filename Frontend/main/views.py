@@ -18,8 +18,7 @@ def loadFileConfiguration(request):
             print(path["ruta"])
             file_xml = etree.parse(path["ruta"])
             content = etree.tostring(file_xml, encoding='utf8', method='xml')
-            content = {"contenido":content}
-            print(content)
+            requests.post(end_point+'archivoConfiguracion', data=content)
             #resource = requests.post(end_point+'nuevoRecurso', json=content)
             #resource = resource.content.decode('utf-8')
             #resource = json.loads(resource)
