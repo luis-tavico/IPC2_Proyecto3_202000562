@@ -13,8 +13,8 @@
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
             <div class="mb-3">
-                <input type="text" class="form-control" name="archivoConsumos" id="" aria-describedby="helpId" placeholder="Ingrese la ruta del archivo">
-            </div>
+                <input type="file" class="form-control" name="" id="" placeholder="" aria-describedby="fileHelpId">
+          </div>
             
             <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
             <a name="" id="" class="btn btn-danger" href="{% url 'inicio' %}" role="button">Cancelar</a>

@@ -6,10 +6,10 @@
 
 <div class="card">
     <div class="card-header">
-        Crear Nuevo Recurso
+        Crear Nueva Categoria
     </div>
     <div class="card-body">
-        <h4 class="card-title">Datos del Recurso</h4>
+        <h4 class="card-title">Datos de la Categoria</h4>
 
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
@@ -18,19 +18,10 @@
                 <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID">
                 <label for="" class="form-label">Nombre</label>
                 <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre">
-                <label for="" class="form-label">Abreviatura</label>
-                <input type="text" class="form-control" name="abreviatura" id="" aria-describedby="helpId" placeholder="Abreviatura">
-                <label for="" class="form-label">Metrica</label>
-                <input type="text" class="form-control" name="metrica" id="" aria-describedby="helpId" placeholder="Metrica">
-                <div class="mb-3">
-                    <label for="" class="form-label">Tipo</label>
-                    <select class="form-select" name="tipo" id="">
-                        <option>Hardware</option>
-                        <option>software</option>
-                    </select>
-                </div>
-                <label for="" class="form-label">Valor/Hora</label>
-                <input type="text" class="form-control" name="valorXhora" id="" aria-describedby="helpId" placeholder="valor">
+                <label for="" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" name="descripcion" id="" aria-describedby="helpId" placeholder="Descripcion">
+                <label for="" class="form-label">Descripcion Carga de Trabajo</label>
+                <input type="text" class="form-control" name="cargaTrabajo" id="" aria-describedby="helpId" placeholder="Descripcion Carga de Trabajo">
             </div>
             
             <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">

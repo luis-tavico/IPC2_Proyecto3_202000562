@@ -6,4 +6,5 @@ path('recursos', views.getResources, name='recursos'), #El name sirve para acced
 path('nuevoRecurso', views.newResource, name='nuevoRecurso'),
 path('editarRecurso/<str:id>', views.editResource, name='editarRecurso'),
 path('eliminarRecurso/<str:id>', views.deleteResource, name='eliminarRecurso'),
+path('nuevaCategoria', views.newCategory, name='nuevaCategoria'),
 ]

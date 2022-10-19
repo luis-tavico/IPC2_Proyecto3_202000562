@@ -1,0 +1,105 @@
+{% extends "headerCustomers.html" %}
+
+{% block title %} Clientes {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'nuevoCliente' %}" role="button">Crear Nuevo Cliente</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Clientes</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">NIT</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Direccion</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Clave</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for recurso in recursos %}
+                    <tr>
+                        <td>{{ recurso.id }}</td>
+                        <td>{{ recurso.nombre }}</td>
+                        <td>{{ recurso.abreviatura }}</td>
+                        <td>{{ recurso.metrica }}</td>
+                        <td>{{ recurso.tipo }}</td>
+                        <td>{{ recurso.valorXhora }}</td>     
+                        <td>
+                            <a name="" id="" class="btn btn-info" href="{% url 'editarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
+                            |
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    /*table = document.querySelector(".table");
+
+    
+    var resources = '{{recursos|escapejs}}'
+    console.log(resources)
+    var regex = new RegExp("\'", "g");
+    resources = resources.replace(regex, '"');
+    resources = JSON.parse(resources)
+
+    addRowsToTable();
+
+      function addRowsToTable() {
+        if (resources.length > 0) {
+          for (var i = 0; i < resources.length; i++) {
+            addRowToTable(i);
+          }
+        }
+      }
+
+      function addRowToTable(i) {
+        let row = table.insertRow(-1);
+        let cellID = row.insertCell(0);
+        let cellName = row.insertCell(1);
+        let cellAbbreviation = row.insertCell(2);
+        let cellMetric = row.insertCell(3);
+        let cellType = row.insertCell(4);
+        let cellValue = row.insertCell(5);
+        let cellActions = row.insertCell(6);
+        cellID.textContent = resources[i]["id"];
+        cellName.textContent = resources[i]["nombre"];
+        cellAbbreviation.textContent = resources[i]["abreviatura"];
+        cellMetric.textContent = resources[i]["metrica"];
+        cellType.textContent = resources[i]["tipo"];
+        cellValue.textContent = resources[i]["valorXhora"];
+
+        const btnEdit = document.createElement("a");
+        btnEdit.href = "#editEmployeeModal";
+        btnEdit.className = "edit";
+        btnEdit.dataset.toggle = "modal";
+        btnEdit.innerHTML = `<i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Editar"></i>`;
+        cellActions.appendChild(btnEdit);
+        const btnDelete = document.createElement("a");
+        btnDelete.href = "#deleteEmployeeModal";
+        btnDelete.className = "delete";
+        btnDelete.dataset.toggle = "modal";
+        btnDelete.innerHTML = `<i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Eliminar"></i>`;
+        cellActions.appendChild(btnDelete);
+      }*/
+</script>
+
+{% endblock %}
