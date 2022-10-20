@@ -63,3 +63,9 @@ for resource in listResources:
     nameResourse = resource.find('nombre').text
     print(nameResourse)
 """
+
+categorias = {"nombre":"name"}
+categorias['configuraciones'] = [{"recursos":[]}]
+print(categorias)
+
+print("configuraciones" in categorias)

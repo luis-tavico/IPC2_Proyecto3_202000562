@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 import requests
 import json
-from .forms import Form, FormCategory
+from .forms import FormResource
 end_point='http://127.0.0.1:5000/'
 
 def getResources(request):
@@ -15,7 +15,7 @@ def getResources(request):
     #return render(request, 'getResources.html', context)
 
 def newResource(request):
-    form = Form(request.POST)
+    form = FormResource(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
@@ -23,11 +23,11 @@ def newResource(request):
             resource = resource.content.decode('utf-8')
             resource = json.loads(resource)
             return redirect('recursos')
-    return render(request, 'newResource.html', {'form':form}) 
+    return render(request, 'newResource.html') 
 
 def editResource(request, id):
     resource = search_resource(id)
-    form = Form(request.POST)
+    form = FormResource(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
@@ -48,12 +48,3 @@ def search_resource(id):
     for resource in rscs:
         if resource["id"] == id:
             return resource
-
-def newCategory(request):
-    form = FormCategory(request.POST)
-    if request.method == "POST":
-        if form.is_valid():
-            print("si")
-            data = form.cleaned_data
-            print(data)
-    return render(request, 'newCategory.html') 

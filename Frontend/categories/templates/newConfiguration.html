@@ -1,15 +1,15 @@
 {% extends "headerCategories.html" %}
 
-{% block title %} Categorias {% endblock %}
+{% block title %} Configuraciones {% endblock %}
 
 {% block container %}
 
 <div class="card">
     <div class="card-header">
-        Crear Nueva Categoria
+        Crear Nueva Configuracion
     </div>
     <div class="card-body">
-        <h4 class="card-title">Datos de la Categoria</h4>
+        <h4 class="card-title">Datos de la Configuracion</h4>
 
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
@@ -20,12 +20,10 @@
                 <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre">
                 <label for="" class="form-label">Descripcion</label>
                 <input type="text" class="form-control" name="descripcion" id="" aria-describedby="helpId" placeholder="Descripcion">
-                <label for="" class="form-label">Descripcion Carga de Trabajo</label>
-                <input type="text" class="form-control" name="cargaTrabajo" id="" aria-describedby="helpId" placeholder="Descripcion Carga de Trabajo">
             </div>
             
             <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
-            <a name="" id="" class="btn btn-danger" href="{% url 'categorias' %}" role="button">Cancelar</a>
+            <a name="" id="" class="btn btn-danger" href="{% url 'configuraciones' idCategoria %}" role="button">Cancelar</a>
 
         </form>
 
@@ -36,3 +34,5 @@
 </div>
 
 {% endblock %}
+
+<!--{% url 'editarCategoria' categoria.id %}-->

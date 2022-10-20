@@ -1,38 +1,33 @@
 {% extends "headerCategories.html" %}
 
-{% block title %} Categorias {% endblock %}
+{% block title %} Recursos {% endblock %}
 
 {% block container %}
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'nuevaCategoria' %}" role="button">Crear Nueva Categoria</a>
+        <a name="" id="" class="btn btn-success" href="{% url 'agregarRecurso' %}" role="button">Agregar Recurso</a>
     </div>
     <div class="card-body">
-        <h4 class="card-title">Categorias</h4>
+        <h4 class="card-title">Recursos</h4>
         <div class="table-responsive">
             <table class="table table-primary">
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Descripcion</th>
-                        <th scope="col">Carga de Trabajo</th>
+                        <th scope="col">Cantidad</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
 
-                    {% for categoria in categorias %}
+                    {% for recurso in recursos %}
                     <tr>
                         <td>{{ categoria.id }}</td>
-                        <td>{{ categoria.nombre }}</td>
-                        <td>{{ categoria.descripcion }}</td>
-                        <td>{{ categoria.cargaTrabajo }}</td>    
+                        <td>{{ recurso.cantidad }}</td>
                         <td>
                             <a name="" id="" class="btn btn-info" href="{% url 'editarCategoria' categoria.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
                             <a name="" id="" class="btn btn-danger" href="{% url 'eliminarCategoria' categoria.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
-                            <a name="" id="" class="btn btn-secondary" href="{% url 'configuraciones' categoria.id %}" role="button"><i class="fa-solid fa-gear"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

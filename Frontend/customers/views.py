@@ -2,54 +2,53 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 import requests
 import json
-#from .forms import Form, FormCategory
+from .forms import FormCustomer
 end_point='http://127.0.0.1:5000/'
 
 def getCustomers(request):
-    #global customers
-    #resources = requests.get(end_point+'recursos')
-    #resources = resources.content.decode('utf-8')
-    #resources = json.loads(resources)
-    #return render(request, 'getCutomers.html', customers)
-    return render(request, 'getCustomers.html')
+    global customers
+    customers = requests.get(end_point+'clientes')
+    customers = customers.content.decode('utf-8')
+    customers = json.loads(customers)
+    return render(request, 'getCustomers.html', customers)
 
 def newCustomer(request):
-    """form = Form(request.POST)
+    form = FormCustomer(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
-            resource = requests.post(end_point+'nuevoRecurso', json=data)
-            resource = resource.content.decode('utf-8')
-            resource = json.loads(resource)
-            return redirect('recursos')"""
-    return render(request, 'newCustomer.html') 
-    #return render(request, 'newCustomer.html', {'form':form}) 
+            customer = requests.post(end_point+'nuevoCliente', json=data)
+            customer = customer.content.decode('utf-8')
+            customer = json.loads(customer)
+            return redirect('clientes')
+    #return render(request, 'newCustomer.html') 
+    return render(request, 'newCustomer.html', {'form':form}) 
 
-"""def editResource(request, id):
-    resource = search_resource(id)
-    form = Form(request.POST)
+def editCustomer(request, id):
+    customer = search_customer(id)
+    form = FormCustomer(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
-            resource = requests.put(end_point+'editarRecurso', json=data) 
-            resource = resource.content.decode('utf-8')
-            resource = json.loads(resource)
-            return redirect('recursos')
-    return render(request, 'editResource.html', {"recurso":resource})
+            customer = requests.put(end_point+'editarCliente', json=data) 
+            customer = customer.content.decode('utf-8')
+            customer = json.loads(customer)
+            return redirect('clientes')
+    return render(request, 'editCustomer.html', {"cliente":customer})
 
-def deleteResource(request, id):
-    id = {"id":id}
-    print(id)
-    requests.delete(end_point+'eliminarRecurso', json=id)   
-    return redirect('recursos')
+def deleteCustomer(request, nit):
+    nit = {"id":nit}
+    print(nit)
+    requests.delete(end_point+'eliminarCliente', json=nit)   
+    return redirect('clientes')
 
-def search_resource(id):
-    rscs = resources["recursos"]
-    for resource in rscs:
-        if resource["id"] == id:
-            return resource
+def search_customer(nit):
+    ctm = customers["clientes"]
+    for customer in ctm:
+        if customer["nit"] == nit:
+            return customer
 
-def newCategory(request):
+"""def newCustomer(request):
     form = FormCategory(request.POST)
     if request.method == "POST":
         if form.is_valid():

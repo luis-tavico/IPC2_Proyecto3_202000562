@@ -7,8 +7,6 @@ class DataBase:
         self.resources = []
         self.categories = []
         self.customers = []
-        self.configurations = []
-        self.instances = []
         self.consumptions = []
         self.loadData()
 
@@ -107,93 +105,99 @@ class DataBase:
             file_xml = etree.parse("./database.xml")
             content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
             self.readConfigurationFile(content_xml)
-        else:
-            database = ET.tostring(ET.Element('database'))
-            file_xml = open("./database.xml", "wb")
-            file_xml.write(database)  
-            file_xml.close()
 
     ################################ SAVE ################################
-    def saveData(self):    
+    def saveData(self):   
+        database = ET.tostring(ET.Element('database'))
+        file_xml = open("./database.xml", "wb")
+        file_xml.write(database)  
+        file_xml.close() 
+
         file_xml = ET.parse("./database.xml")
         database = file_xml.getroot() 
 
-        listResources = ET.Element('listaRecursos')
-        for rsc in self.resources:
-            resource = ET.SubElement(listResources, 'recurso')
-            resource.set("id", rsc["id"])
-            nameResource = ET.SubElement(resource, 'nombre')
-            nameResource.text = rsc["nombre"]
-            abbreviationResource = ET.SubElement(resource, 'abreviatura')
-            abbreviationResource.text = rsc["abreviatura"]
-            metricsResource = ET.SubElement(resource, 'metrica')
-            metricsResource.text = rsc["metrica"]
-            typeResource = ET.SubElement(resource, 'tipo')
-            typeResource.text = rsc["tipo"]
-            valueResource = ET.SubElement(resource, 'valorXhora')
-            valueResource.text = str(rsc["valorXhora"])
-        database.append(listResources)
+        if len(self.resources) > 0:
+            listResources = ET.Element('listaRecursos')
+            for rsc in self.resources:
+                resource = ET.SubElement(listResources, 'recurso')
+                resource.set("id", rsc["id"])
+                nameResource = ET.SubElement(resource, 'nombre')
+                nameResource.text = rsc["nombre"]
+                abbreviationResource = ET.SubElement(resource, 'abreviatura')
+                abbreviationResource.text = rsc["abreviatura"]
+                metricsResource = ET.SubElement(resource, 'metrica')
+                metricsResource.text = rsc["metrica"]
+                typeResource = ET.SubElement(resource, 'tipo')
+                typeResource.text = rsc["tipo"]
+                valueResource = ET.SubElement(resource, 'valorXhora')
+                valueResource.text = str(rsc["valorXhora"])
+            database.append(listResources)
 
-        listCategories = ET.Element('listaCategorias')
-        for ctg in self.categories:
-            category = ET.SubElement(listCategories, 'categoria')
-            category.set("id", ctg["id"])
-            nameCategory = ET.SubElement(category, 'nombre')
-            nameCategory.text = ctg["nombre"]
-            descriptionCategory = ET.SubElement(category, 'descripcion')
-            descriptionCategory.text = ctg["descripcion"]
-            workLoadCategory = ET.SubElement(category, 'cargaTrabajo')
-            workLoadCategory.text = ctg["cargaTrabajo"]
-            configs = ctg["configuraciones"]
-            listConfigurations = ET.SubElement(category, 'listaConfiguraciones')
-            for cfg in configs:
-                configuration = ET.SubElement(listConfigurations, 'configuracion')
-                configuration.set("id", cfg["id"])
-                nameConfiguration = ET.SubElement(configuration, 'nombre')
-                nameConfiguration.text = cfg["nombre"]
-                descriptionConfiguration = ET.SubElement(configuration, 'descripcion')
-                descriptionConfiguration.text = cfg["descripcion"]
-                resours = cfg["recursos"]
-                listResources = ET.SubElement(configuration, 'recursosConfiguracion')
-                for rsc in resours:
-                    resource = ET.SubElement(listResources, 'recurso')
-                    resource.set("id", rsc["id"])
-                    resource.text = rsc["cantidad"]
-        database.append(listCategories)
+        if len(self.categories) > 0:
+            listCategories = ET.Element('listaCategorias')
+            for ctg in self.categories:
+                category = ET.SubElement(listCategories, 'categoria')
+                category.set("id", ctg["id"])
+                nameCategory = ET.SubElement(category, 'nombre')
+                nameCategory.text = ctg["nombre"]
+                descriptionCategory = ET.SubElement(category, 'descripcion')
+                descriptionCategory.text = ctg["descripcion"]
+                workLoadCategory = ET.SubElement(category, 'cargaTrabajo')
+                workLoadCategory.text = ctg["cargaTrabajo"]
+                if "configuraciones" in ctg:
+                    configs = ctg["configuraciones"]                  
+                    listConfigurations = ET.SubElement(category, 'listaConfiguraciones')
+                    for cfg in configs:
+                        configuration = ET.SubElement(listConfigurations, 'configuracion')
+                        configuration.set("id", cfg["id"])
+                        nameConfiguration = ET.SubElement(configuration, 'nombre')
+                        nameConfiguration.text = cfg["nombre"]
+                        descriptionConfiguration = ET.SubElement(configuration, 'descripcion')
+                        descriptionConfiguration.text = cfg["descripcion"]
+                        if "recursos" in cfg:
+                            resours = cfg["recursos"]
+                            listResources = ET.SubElement(configuration, 'recursosConfiguracion')
+                            for rsc in resours:
+                                resource = ET.SubElement(listResources, 'recurso')
+                                resource.set("id", rsc["id"])
+                                resource.text = rsc["cantidad"]
+                database.append(listCategories)
 
-        listCustomers = ET.Element('listaClientes')
-        for ctm in self.customers:
-            customer = ET.SubElement(listCustomers, 'cliente')
-            customer.set("nit", ctm["nit"])
-            nameCustomer = ET.SubElement(customer, 'nombre')
-            nameCustomer.text = ctm["nombre"]
-            userCustomer = ET.SubElement(customer, 'usuario')
-            userCustomer.text = ctm["usuario"]
-            passwordCustomer = ET.SubElement(customer, 'clave')
-            passwordCustomer.text = ctm["clave"]
-            addresCustomer = ET.SubElement(customer, 'direccion')
-            addresCustomer.text = ctm["direccion"]
-            emailCustomer = ET.SubElement(customer, 'correoElectronico')
-            emailCustomer.text = ctm["correoElectronico"]
-            instans = ctm["instancias"]
-            listaInstances = ET.SubElement(customer, 'listaInstancias')
-            for intc in instans:
-                instance = ET.SubElement(listaInstances, 'instancia')
-                instance.set("id", intc["id"])
-                idCategory = ET.SubElement(instance, 'idCategoria')
-                idCategory.text = intc["idCategoria"]
-                nameInstance = ET.SubElement(instance, 'nombre')
-                nameInstance.text = intc["nombre"]
-                dateStartInstance = ET.SubElement(instance, 'fechaInicio')
-                dateStartInstance.text = intc["fechaInicio"]
-                stateInstance = ET.SubElement(instance, 'estado')
-                stateInstance.text = intc["estado"]
-                dateEndInstance = ET.SubElement(instance, 'fechaFinal')
-                dateEndInstance.text = intc["fechaFinal"]
-        database.append(listCustomers)
+        if len(self.customers) > 0:
+            listCustomers = ET.Element('listaClientes')
+            for ctm in self.customers:
+                customer = ET.SubElement(listCustomers, 'cliente')
+                customer.set("nit", ctm["nit"])
+                nameCustomer = ET.SubElement(customer, 'nombre')
+                nameCustomer.text = ctm["nombre"]
+                userCustomer = ET.SubElement(customer, 'usuario')
+                userCustomer.text = ctm["usuario"]
+                passwordCustomer = ET.SubElement(customer, 'clave')
+                passwordCustomer.text = ctm["clave"]
+                addresCustomer = ET.SubElement(customer, 'direccion')
+                addresCustomer.text = ctm["direccion"]
+                emailCustomer = ET.SubElement(customer, 'correoElectronico')
+                emailCustomer.text = ctm["correoElectronico"]
+                instans = ctm["instancias"]
+                listaInstances = ET.SubElement(customer, 'listaInstancias')
+                for intc in instans:
+                    instance = ET.SubElement(listaInstances, 'instancia')
+                    instance.set("id", intc["id"])
+                    idCategory = ET.SubElement(instance, 'idCategoria')
+                    idCategory.text = intc["idCategoria"]
+                    nameInstance = ET.SubElement(instance, 'nombre')
+                    nameInstance.text = intc["nombre"]
+                    dateStartInstance = ET.SubElement(instance, 'fechaInicio')
+                    dateStartInstance.text = intc["fechaInicio"]
+                    stateInstance = ET.SubElement(instance, 'estado')
+                    stateInstance.text = intc["estado"]
+                    dateEndInstance = ET.SubElement(instance, 'fechaFinal')
+                    dateEndInstance.text = intc["fechaFinal"]
+            database.append(listCustomers)
 
-        listConsumptions = ET.Element('listadoConsumos')
-        database.append(listConsumptions)
+        if len(self.consumptions) > 0:
+            listConsumptions = ET.Element('listadoConsumos')
+            database.append(listConsumptions)
 
         file_xml.write("./database.xml")
 
@@ -257,25 +261,125 @@ class DataBase:
     def getCategories(self):
         return self.categories
 
+   ################################ CONFIGURATIONS ################################
+    def newConfiguration(self, cnf, idCategory):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                if not ("configuraciones" in category):
+                    category['configuraciones'] = []
+                configurations = category["configuraciones"]
+                configurations.append(cnf)
+                self.saveData()     
+                return True
+        return False              
+        
+    def updateConfiguration(self, cnf, idCategory):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == cnf['id']:
+                        index = configurations.index(configuration)                
+                        configurations[index] = cnf
+                        self.saveData()     
+                        return True
+        return False         
+
+    def deleteConfiguration(self, idConfiguration, idCategory):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == idConfiguration:
+                        index = configurations.index(configuration)                
+                        configurations.pop(index)
+                        self.saveData()     
+                        return True
+        return False         
+                    
+    def getConfigurations(self, idCategory):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                if not ("configuraciones" in category):
+                    return "[]"
+                configurations = category["configuraciones"]
+                return configurations        
+
+   ################################ INSTANCES ################################
+    def newInstance(self, idCategory, idConfiguration, intc):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == idConfiguration:
+                        if not ("instancias" in configuration):
+                            configuration['instancias'] = []
+                        instances = configuration["instancias"]
+                        instances.append(intc)
+                        self.saveData()     
+                        return True
+        return False              
+        
+    def updateInstance(self, idCategory, idConfiguration, intc):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == idConfiguration:
+                        instances = configuration["instancias"]
+                        for instance in instances:
+                            if instance['id'] == intc['id']:
+                                index = instances.index(instance)                
+                                instances.pop(index)
+                                self.saveData()     
+                                return True
+        return False     
+
+    def deleteInstance(self, idConfiguration, idCategory, idInstance):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == idConfiguration:
+                        instances = configuration["instancias"]
+                        for instance in instances:
+                            if instance['id'] == idInstance:
+                                index = instances.index(instance)                
+                                instances.pop(index)
+                                self.saveData()     
+                                return True
+        return False          
+                    
+    def getInstances(self, idCategory, idConfiguration):
+        for category in self.categories:
+            if category['id'] == idCategory:
+                configurations = category["configuraciones"]
+                for configuration in configurations:
+                    if configuration['id'] == idConfiguration:
+                        if not ("instancias" in configuration):
+                            return []
+                        instances = configuration["instancias"]
+                        return instances     
+                        
     ################################ CUSTOMERS ################################
     def newCustomer(self, ctm):
         for customer in self.customers:
-            if customer['id'] == ctm['id']:
+            if customer['nit'] == ctm['nit']:
                 return False
         self.customers.append(ctm)
         return True
 
     def updateCustomer(self, ctm):
         for customer in self.customers:
-            if customer['id'] == ctm["id"]:
+            if customer['nit'] == ctm["nit"]:
                 index = self.customers.index(customer)                
                 self.customers[index] = ctm
                 return True
         return False
 
-    def deleteCustomer(self, id):
+    def deleteCustomer(self, nit):
         for customer in self.customers:
-            if customer['id'] == id:
+            if customer['nit'] == nit:
                 index = self.customers.index(customer)
                 self.customers.pop(index)
                 return True
@@ -285,20 +389,20 @@ class DataBase:
         return self.customers
 
 
-"""db = DataBase()
-file_xml = etree.parse("Backend/files/archivoConfiguraciones.xml")
-content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
-db.readConfigurationFile(content_xml)
-print(db.resources)
-print(db.categories)
-print(db.customers)
-file_xml = etree.parse("Backend/files/archivoConsumos.xml")
+#db = DataBase()
+#file_xml = etree.parse("Backend/files/archivoConfiguraciones.xml")
+#content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
+#db.readConfigurationFile(content_xml)
+#print(db.resources)
+#print(db.categories)
+#print(db.customers)
+
+"""file_xml = etree.parse("Backend/files/archivoConsumos.xml")
 content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
 db.readConsumptionFile(content_xml)
 print(db.consumptions)
-db.saveData()"""
-
-
+db.saveData()
+"""
 
 
 

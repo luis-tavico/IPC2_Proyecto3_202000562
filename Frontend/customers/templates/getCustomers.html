@@ -25,18 +25,17 @@
                 </thead>
                 <tbody>
 
-                    {% for recurso in recursos %}
+                    {% for cliente in clientes %}
                     <tr>
-                        <td>{{ recurso.id }}</td>
-                        <td>{{ recurso.nombre }}</td>
-                        <td>{{ recurso.abreviatura }}</td>
-                        <td>{{ recurso.metrica }}</td>
-                        <td>{{ recurso.tipo }}</td>
-                        <td>{{ recurso.valorXhora }}</td>     
+                        <td>{{ cliente.nit }}</td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.direccion }}</td>
+                        <td>{{ cliente.correoElectronico }}</td>
+                        <td>{{ cliente.usuario }}</td>
+                        <td>{{ cliente.clave }}</td>     
                         <td>
-                            <a name="" id="" class="btn btn-info" href="{% url 'editarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
-                            |
-                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-info" href="{% url 'editarCliente' cliente.nit %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarCliente' cliente.nit %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -50,56 +49,5 @@
 {% endblock %}
 
 {% block script %}
-
-<script>
-    /*table = document.querySelector(".table");
-
-    
-    var resources = '{{recursos|escapejs}}'
-    console.log(resources)
-    var regex = new RegExp("\'", "g");
-    resources = resources.replace(regex, '"');
-    resources = JSON.parse(resources)
-
-    addRowsToTable();
-
-      function addRowsToTable() {
-        if (resources.length > 0) {
-          for (var i = 0; i < resources.length; i++) {
-            addRowToTable(i);
-          }
-        }
-      }
-
-      function addRowToTable(i) {
-        let row = table.insertRow(-1);
-        let cellID = row.insertCell(0);
-        let cellName = row.insertCell(1);
-        let cellAbbreviation = row.insertCell(2);
-        let cellMetric = row.insertCell(3);
-        let cellType = row.insertCell(4);
-        let cellValue = row.insertCell(5);
-        let cellActions = row.insertCell(6);
-        cellID.textContent = resources[i]["id"];
-        cellName.textContent = resources[i]["nombre"];
-        cellAbbreviation.textContent = resources[i]["abreviatura"];
-        cellMetric.textContent = resources[i]["metrica"];
-        cellType.textContent = resources[i]["tipo"];
-        cellValue.textContent = resources[i]["valorXhora"];
-
-        const btnEdit = document.createElement("a");
-        btnEdit.href = "#editEmployeeModal";
-        btnEdit.className = "edit";
-        btnEdit.dataset.toggle = "modal";
-        btnEdit.innerHTML = `<i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Editar"></i>`;
-        cellActions.appendChild(btnEdit);
-        const btnDelete = document.createElement("a");
-        btnDelete.href = "#deleteEmployeeModal";
-        btnDelete.className = "delete";
-        btnDelete.dataset.toggle = "modal";
-        btnDelete.innerHTML = `<i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Eliminar"></i>`;
-        cellActions.appendChild(btnDelete);
-      }*/
-</script>
 
 {% endblock %}

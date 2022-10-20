@@ -13,8 +13,7 @@ db = DataBase()
 def file_configuration():
     xml_content = request.get_data()
     xml_content = xml_content.decode('UTF-8')
-    fileConfigurations = ET.fromstring(xml_content)
-    print(fileConfigurations)
+    db.readConfigurationFile(xml_content)
     return jsonify({"mensaje": "Recibido"}), 200
 
 ######################## LOAD FILE CONSUMPTIONS ####################################
@@ -80,6 +79,69 @@ def update_category():
 
 @app.route("/eliminarCategoria", methods=["DELETE"])
 def delete_category():
+    data = request.get_json()
+    id = data["id"]
+    response = db.deleteCategory(id)
+    if response:
+        return jsonify({"mensaje": "Categoria eliminada"}), 200
+
+######################## CONFIGURATIONS ####################################
+@app.route("/configuraciones", methods=["POST"])
+def get_configurations():
+    idCategory = request.get_json()
+    idCategory = idCategory["idCategoria"]
+    configurations = db.getConfigurations(idCategory)
+    return jsonify({"configuraciones":configurations}), 200
+
+@app.route("/nuevaConfiguracion", methods=["POST"])
+def create_configuration():
+    data = request.get_json()
+    idCategory = data.pop("idCategoria")
+    response = db.newConfiguration(data, idCategory)
+    if response:
+        return jsonify(request.get_json()), 201
+    else:
+        return jsonify({"mensaje": "Categoria repetida"}), 400
+
+@app.route("/editarConfiguracion", methods=["PUT"])
+def update_configuration():
+    data = request.get_json()
+    response = db.updateCategory(data)
+    if response:
+        return jsonify({"mensaje": "Categoria actualizada"}), 200
+
+@app.route("/eliminarConfiguracion", methods=["DELETE"])
+def delete_configuration():
+    data = request.get_json()
+    id = data["id"]
+    response = db.deleteCategory(id)
+    if response:
+        return jsonify({"mensaje": "Categoria eliminada"}), 200
+
+######################## INSTANCES ####################################
+@app.route("/instancias")
+def get_instances():
+    categories = db.getCategories()
+    return jsonify({"categorias":categories}), 200
+
+@app.route("/nuevaInstancia", methods=["POST"])
+def create_instance():
+    data = request.get_json()
+    response = db.newCategory(data)
+    if response:
+        return jsonify(request.get_json()), 201
+    else:
+        return jsonify({"mensaje": "Categoria repetida"}), 400
+
+@app.route("/editarInstancia", methods=["PUT"])
+def update_instance():
+    data = request.get_json()
+    response = db.updateCategory(data)
+    if response:
+        return jsonify({"mensaje": "Categoria actualizada"}), 200
+
+@app.route("/eliminarInstancia", methods=["DELETE"])
+def delete_instance():
     data = request.get_json()
     id = data["id"]
     response = db.deleteCategory(id)

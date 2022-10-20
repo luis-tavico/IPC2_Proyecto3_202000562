@@ -1,0 +1,48 @@
+{% extends "headerCategories.html" %}
+
+{% block title %} Configuraciones {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'nuevaConfiguracion' %}" role="button">Crear Nueva Configuracion</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Configuraciones</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for configuracion in configuraciones %}
+                    <tr>
+                        <td>{{ configuracion.id }}</td>
+                        <td>{{ configuracion.nombre }}</td>
+                        <td>{{ configuracion.descripcion }}</td>   
+                        <td>
+                            <a name="" id="" class="btn btn-info" href="{% url 'editarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-secondary" href="{% url 'eliminarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-microchip"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
