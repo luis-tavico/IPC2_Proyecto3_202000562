@@ -23,11 +23,10 @@
 
                     {% for recurso in recursos %}
                     <tr>
-                        <td>{{ categoria.id }}</td>
+                        <td>{{ recurso.id }}</td>
                         <td>{{ recurso.cantidad }}</td>
                         <td>
-                            <a name="" id="" class="btn btn-info" href="{% url 'editarCategoria' categoria.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarCategoria' categoria.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

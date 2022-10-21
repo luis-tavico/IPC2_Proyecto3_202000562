@@ -6,7 +6,7 @@
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'nuevoCliente' %}" role="button">Crear Nuevo Cliente</a>
+        <a name="" id="" class="btn btn-success" href="{% url 'crearCliente' %}" role="button">Crear Nuevo Cliente</a>
     </div>
     <div class="card-body">
         <h4 class="card-title">Clientes</h4>
@@ -36,6 +36,7 @@
                         <td>
                             <a name="" id="" class="btn btn-info" href="{% url 'editarCliente' cliente.nit %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
                             <a name="" id="" class="btn btn-danger" href="{% url 'eliminarCliente' cliente.nit %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'instancias' cliente.nit %}" role="button"><i class="fa-solid fa-file"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

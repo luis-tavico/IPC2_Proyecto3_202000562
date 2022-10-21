@@ -202,7 +202,7 @@ class DataBase:
         file_xml.write("./database.xml")
 
     ################################ RESOURCES ################################
-    def newResource(self, rsc):
+    def createResource(self, rsc):
         for resource in self.resources:
             if resource['id'] == rsc["id"]:
                 return False
@@ -232,7 +232,7 @@ class DataBase:
         return self.resources
 
    ################################ CATEGORIES ################################
-    def newCategory(self, ctg):
+    def createCategory(self, ctg):
         for category in self.categories:
             if category['id'] == ctg['id']:
                 return False
@@ -262,7 +262,7 @@ class DataBase:
         return self.categories
 
    ################################ CONFIGURATIONS ################################
-    def newConfiguration(self, cnf, idCategory):
+    def createConfiguration(self, cnf, idCategory):
         for category in self.categories:
             if category['id'] == idCategory:
                 if not ("configuraciones" in category):
@@ -301,68 +301,68 @@ class DataBase:
         for category in self.categories:
             if category['id'] == idCategory:
                 if not ("configuraciones" in category):
-                    return "[]"
+                    return []
                 configurations = category["configuraciones"]
                 return configurations        
 
-   ################################ INSTANCES ################################
-    def newInstance(self, idCategory, idConfiguration, intc):
+   ################################ RESOURCES IN CATEGORIES ################################
+    def createResourceInCategory(self, idCategory, idConfiguration, rsc):
         for category in self.categories:
             if category['id'] == idCategory:
                 configurations = category["configuraciones"]
                 for configuration in configurations:
                     if configuration['id'] == idConfiguration:
-                        if not ("instancias" in configuration):
-                            configuration['instancias'] = []
-                        instances = configuration["instancias"]
-                        instances.append(intc)
+                        if not ("recursos" in configuration):
+                            configuration['recursos'] = []
+                        resources = configuration["recursos"]
+                        resources.append(rsc)
                         self.saveData()     
                         return True
         return False              
         
-    def updateInstance(self, idCategory, idConfiguration, intc):
+    def updateResourceInCategory(self, idCategory, idConfiguration, rsc):
         for category in self.categories:
             if category['id'] == idCategory:
                 configurations = category["configuraciones"]
                 for configuration in configurations:
                     if configuration['id'] == idConfiguration:
-                        instances = configuration["instancias"]
-                        for instance in instances:
-                            if instance['id'] == intc['id']:
-                                index = instances.index(instance)                
-                                instances.pop(index)
+                        resources = configuration["recursos"]
+                        for resource in resources:
+                            if resource['id'] == rsc['id']:
+                                index = resources.index(resource)                
+                                resources.pop(index)
                                 self.saveData()     
                                 return True
         return False     
 
-    def deleteInstance(self, idConfiguration, idCategory, idInstance):
+    def deleteResourceInCategory(self, idConfiguration, idCategory, idResource):
         for category in self.categories:
             if category['id'] == idCategory:
                 configurations = category["configuraciones"]
                 for configuration in configurations:
                     if configuration['id'] == idConfiguration:
-                        instances = configuration["instancias"]
-                        for instance in instances:
-                            if instance['id'] == idInstance:
-                                index = instances.index(instance)                
-                                instances.pop(index)
+                        resources = configuration["instancias"]
+                        for resource in resources:
+                            if resource['id'] == idResource:
+                                index = resources.index(resource)                
+                                resources.pop(index)
                                 self.saveData()     
                                 return True
         return False          
                     
-    def getInstances(self, idCategory, idConfiguration):
+    def getResourcesInCategory(self, idCategory, idConfiguration):
         for category in self.categories:
             if category['id'] == idCategory:
                 configurations = category["configuraciones"]
                 for configuration in configurations:
                     if configuration['id'] == idConfiguration:
-                        if not ("instancias" in configuration):
+                        if not ("recursos" in configuration):
                             return []
-                        instances = configuration["instancias"]
-                        return instances     
+                        resources = configuration["recursos"]
+                        return resources     
                         
     ################################ CUSTOMERS ################################
-    def newCustomer(self, ctm):
+    def createCustomer(self, ctm):
         for customer in self.customers:
             if customer['nit'] == ctm['nit']:
                 return False
@@ -388,50 +388,57 @@ class DataBase:
     def getCustomers(self):
         return self.customers
 
+################################ INSTANCES ################################
+    def createInstance(self, inst, nitCustomer):
+        for customer in self.customers:
+            if customer['nit'] == nitCustomer:
+                if not ("instancias" in customer):
+                    customer['instancias'] = []
+                instances = customer["instancias"]
+                instances.append(inst)
+                self.saveData()     
+                return True
+        return False              
+        
+    def updateInstance(self, inst, nitCustomer):
+        for customer in self.customers:
+            if customer['nit'] == nitCustomer:
+                instances = customer["instancias"]
+                for instance in instances:
+                    if instance['id'] == inst['id']:
+                        index = instances.index(instance)                
+                        instances[index] = inst
+                        self.saveData()     
+                        return True
+        return False     
 
-#db = DataBase()
-#file_xml = etree.parse("Backend/files/archivoConfiguraciones.xml")
-#content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
-#db.readConfigurationFile(content_xml)
-#print(db.resources)
-#print(db.categories)
-#print(db.customers)
+    def deleteInstance(self, nitCustomer, idInstance):
+        for customer in self.customers:
+            if customer['nit'] == nitCustomer:
+                instances = customer["instancias"]
+                for instance in instances:
+                    if instance['id'] == idInstance:
+                        index = instances.index(instance)                
+                        instances.pop(index)
+                        self.saveData()     
+                        return True
+        return False         
+                    
+    def getInstances(self, nitCustomer):
+        for customer in self.customers:
+            if customer['nit'] == nitCustomer:
+                if not ("instancias" in customer):
+                    return []
+                instances = customer["instancias"]
+                return instances    
 
-"""file_xml = etree.parse("Backend/files/archivoConsumos.xml")
-content_xml = etree.tostring(file_xml, encoding='utf8', method='xml')
-db.readConsumptionFile(content_xml)
-print(db.consumptions)
-db.saveData()
-"""
-
-
-
-#db = DataBase()
-#db.loadData()
-"""db.readConfigurationFile("files/archivoConfiguraciones.xml")
-resource = {"id":"r1", "nombre":"system", "abreviatura":"sys",
-                "metrica":"saber", "tipo":"Software", "valorXhora":"30"}
-db.newResource(resource)
-resource = {"id":"r2", "nombre":"system", "abreviatura":"sys",
-                "metrica":"saber", "tipo":"Hardware", "valorXhora":"50"}
-db.newResource(resource)
-resource = {"id":"r2", "nombre":"system", "abreviatura":"sys",
-                "metrica":"saber", "tipo":"Hardware", "valorXhora":"50"}
-db.delete(resource)"""
+################################ CONSUMPTIONS ################################        
+    def getConsumptions(self):
+        return self.consumptions  
 
 
 
-#db = DataBase()
-#db.readConsumptionFile(xml_content)
-"""def newResource(self, rsc):
-    for resource in self.resources:
-        if resource['id'] == rsc["id"]:
-            return False
-    self.resources.append(rsc)
-    self.saveNewResource(rsc)
-    return True
-
-def saveNewResource(self, rsc):
+"""def saveNewResource(self, rsc):
     file_xml = ET.parse("./database.xml")
     database = file_xml.getroot() 
 
@@ -455,15 +462,6 @@ def saveNewResource(self, rsc):
 
     file_xml.write("./database.xml")
 
-def updateResource(self, rsc):
-    for resource in self.resources:
-        if resource['id'] == rsc["id"]:
-            index = self.resources.index(resource)                
-            self.resources[index] = rsc
-            self.saveUpdateResource(rsc)
-            return True
-    return False
-
 def saveUpdateResource(self, rsc):
     file_xml = ET.parse("./database.xml")
     database = file_xml.getroot() 
@@ -485,15 +483,6 @@ def saveUpdateResource(self, rsc):
 
                 file_xml.write(self.pathFileConfigurations)
 
-def deleteResource(self, id):
-    for resource in self.resources:
-        if resource['id'] == id:
-            index = self.resources.index(resource)
-            self.saveDeleteResource(id)
-            self.resources.pop(index)
-            return True
-    return False
-
 def saveDeleteResource(self, rsc):
     file_xml = ET.parse(self.pathFileConfigurations)
     fileConfigurations = file_xml.getroot() 
@@ -504,7 +493,4 @@ def saveDeleteResource(self, rsc):
             if idResource == rsc["id"]:
                 listResources.remove(resource)
 
-                file_xml.write(self.pathFileConfigurations)
-                
-def getResources(self):
-    return self.resources"""
+                file_xml.write(self.pathFileConfigurations)"""

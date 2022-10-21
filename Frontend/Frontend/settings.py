@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'resources',
     'categories',
     'customers',
+    'consumptions',
+    'bills',
 ]
 
 MIDDLEWARE = [

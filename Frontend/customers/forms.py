@@ -1,7 +1,7 @@
 from django import forms
 
 class FormCustomer(forms.Form):
-    nit = forms.CharField(label='id')
+    nit = forms.CharField(label='nit')
     nombre = forms.CharField(label='nombre')
     direccion = forms.CharField(label='direccion')
     correoElectronico = forms.CharField(label='correoElectronico')

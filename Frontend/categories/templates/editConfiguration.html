@@ -1,0 +1,36 @@
+{% extends "headerCategories.html" %}
+
+{% block title %} Configuraciones {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        Editar Configuracion
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos de la Categoria</h4>
+
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="" class="form-label">ID</label>
+                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID", value="{{ configuracion.id }}">
+                <label for="" class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre", value="{{ configuracion.nombre }}">
+                <label for="" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" name="descripcion" id="" aria-describedby="helpId" placeholder="Descripcion", value="{{ configuracion.descripcion }}">               
+            </div>
+            
+            <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
+            <a name="" id="" class="btn btn-danger" href="{% url 'configuraciones' configuracion.idCategoria %}" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+</div>
+
+{% endblock %}

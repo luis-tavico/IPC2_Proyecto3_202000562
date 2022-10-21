@@ -1,0 +1,34 @@
+{% extends "headerCategories.html" %}
+
+{% block title %} Recursos {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        Agregar Recurso
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos del Recurso</h4>
+
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="" class="form-label">ID</label>
+                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID">
+                <label for="" class="form-label">Cantidad</label>
+                <input type="text" class="form-control" name="cantidad" id="" aria-describedby="helpId" placeholder="Cantidad">
+            </div>
+            
+            <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
+            <a name="" id="" class="btn btn-danger" href="{% url 'recursosEnCategoria' idConfiguracion %}" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+</div>
+
+{% endblock %}

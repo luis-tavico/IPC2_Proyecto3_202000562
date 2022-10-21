@@ -6,7 +6,7 @@
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'nuevaConfiguracion' %}" role="button">Crear Nueva Configuracion</a>
+        <a name="" id="" class="btn btn-success" href="{% url 'crearConfiguracion' %}" role="button">Crear Nueva Configuracion</a>
     </div>
     <div class="card-body">
         <h4 class="card-title">Configuraciones</h4>
@@ -30,7 +30,7 @@
                         <td>
                             <a name="" id="" class="btn btn-info" href="{% url 'editarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
                             <a name="" id="" class="btn btn-danger" href="{% url 'eliminarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
-                            <a name="" id="" class="btn btn-secondary" href="{% url 'eliminarConfiguracion' configuracion.id %}" role="button"><i class="fa-solid fa-microchip"></i></a>
+                            <a name="" id="" class="btn btn-secondary" href="{% url 'recursosEnCategoria' configuracion.id %}" role="button"><i class="fa-solid fa-microchip"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

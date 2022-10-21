@@ -1,0 +1,53 @@
+{% extends "headerCustomers.html" %}
+
+{% block title %} Instancias {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'crearInstancia' %}" role="button">Crear Nueva Instancia</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Instancias</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">ID Configuracion</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Fecha Inicio</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha Final</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for instancia in instancias %}
+                    <tr>
+                        <td>{{ instancia.id }}</td>
+                        <td>{{ instancia.idConfiguracion }}</td>
+                        <td>{{ instancia.nombre }}</td>
+                        <td>{{ instancia.fechaInicio }}</td>
+                        <td>{{ instancia.estado }}</td>
+                        <td>{{ instancia.fechaFinal }}</td>  
+                        <td>
+                            <a name="" id="" class="btn btn-info" href="{% url 'editarInstancia' instancia.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarInstancia' instancia.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
