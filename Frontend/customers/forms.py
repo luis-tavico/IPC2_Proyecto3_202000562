@@ -13,5 +13,5 @@ class FormInstance(forms.Form):
     idConfiguracion = forms.CharField(label='idConfiguracion')
     nombre = forms.CharField(label='nombre')
     fechaInicio = forms.CharField(label='fechaInicio')
-    estado = forms.CharField(label='estado')
+    estado = forms.CharField(widget=forms.Select)
     fechaFinal = forms.CharField(label='fechaFinal')

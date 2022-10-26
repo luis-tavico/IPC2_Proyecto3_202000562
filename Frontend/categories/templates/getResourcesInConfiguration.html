@@ -6,7 +6,7 @@
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'agregarRecurso' %}" role="button">Agregar Recurso</a>
+        <a name="" id="" class="btn btn-success" href="{% url 'agregarRecursoConfiguracion' %}" role="button">Agregar Recurso</a>
     </div>
     <div class="card-body">
         <h4 class="card-title">Recursos</h4>
@@ -26,7 +26,7 @@
                         <td>{{ recurso.id }}</td>
                         <td>{{ recurso.cantidad }}</td>
                         <td>
-                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecursoConfiguracion' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

@@ -9,9 +9,9 @@ consumptions = ""
 
 def getConsumptions(request):
     global consumptions
-    #consumptions = requests.get(end_point+'consumos')
-    #consumptions = consumptions.content.decode('utf-8')
-    #consumptions = json.loads(consumptions)
-    #print("----->", consumptions)
-    #return render(request, 'getConsumptions.html', consumptions)
-    return render(request, 'getConsumptions.html')
+    consumptions = requests.get(end_point+'consumos')
+    consumptions = consumptions.content.decode('utf-8')
+    consumptions = json.loads(consumptions)
+    #resources = resources['recursos']
+    print("----->", consumptions)
+    return render(request, 'getConsumptions.html', consumptions)

@@ -52,8 +52,8 @@ def deleteCategory(request, id):
 
 def search_category(id):
     global categories
-    ctg = categories["categorias"]
-    for category in ctg:
+    ctgs = categories["categorias"]
+    for category in ctgs:
         if category["id"] == id:
             return category
 
@@ -70,6 +70,7 @@ def getConfigurations(request, id):
     return render(request, 'getConfigurations.html', configurations)
 
 def createConfiguration(request):
+    global idCategory
     form = FormConfiguration(request.POST)
     if request.method == "POST":
         if form.is_valid():
@@ -83,30 +84,34 @@ def createConfiguration(request):
     #return render(request, 'newResource.html', {'form':form}) 
 
 def editConfiguration(request, id):
-    configuration = search_configuration(id)
     global idCategory
+    configuration = search_configuration(id)  
     configuration["idCategoria"] = idCategory
     print(configuration)
     form = FormConfiguration(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
+            data["idCategoria"] = idCategory
             configuration = requests.put(end_point+'editarConfiguracion', json=data) 
             configuration = configuration.content.decode('utf-8')
             configuration = json.loads(configuration)
-            #return redirect('configuraciones')
+            return redirect('configuraciones/'+idCategory)
     return render(request, 'editConfiguration.html', {"configuracion":configuration})
 
 def deleteConfiguration(request, id):
-    id = {"id":id}
+    global idCategory
+    data = {}
+    data["idConfiguracion"] = id
+    data["idCategoria"] = idCategory
     print(id)
-    requests.delete(end_point+'eliminarConfiguracion', json=id)   
-    return redirect('configuraciones')
+    requests.delete(end_point+'eliminarConfiguracion', json=data)   
+    return redirect('configuraciones/'+idCategory)
 
 def search_configuration(id):
     global configurations
-    cnf = configurations["configuraciones"]
-    for configuration in cnf:
+    cnfs = configurations["configuraciones"]
+    for configuration in cnfs:
         if configuration["id"] == id:
             return configuration
 
@@ -115,13 +120,13 @@ def getResources(request, id):
     global idCategory
     global idConfiguration
     idConfiguration = id
-    data = {"idCategoria":idCategory, "idConfiguracion":id}
+    data = {"idCategoria":idCategory, "idConfiguracion":idConfiguration}
     global resources
     resources = requests.post(end_point+'recursosConfiguracion', json=data) 
     resources = resources.content.decode('utf-8')
     resources = json.loads(resources)
     print("----->",resources)
-    return render(request, 'getResourcesInCategory.html', resources)
+    return render(request, 'getResourcesInConfiguration.html', resources)
 
 def addResource(request):
     form = FormResource(request.POST)
@@ -130,10 +135,11 @@ def addResource(request):
             data = form.cleaned_data
             data["idCategoria"] = idCategory
             data["idConfiguracion"] = idConfiguration
-            resource = requests.post(end_point+'nuevoRecursoConfiguracion', json=data)
+            print(data)
+            resource = requests.post(end_point+'agregarRecursoConfiguracion', json=data)
             resource = resource.content.decode('utf-8')
             resource = json.loads(resource)
-            return redirect('recursosEnCategoria/'+idConfiguration)
+            return redirect('recursosEnConfiguracion/'+idConfiguration)
     return render(request, 'addResource.html', {'idConfiguracion':idConfiguration}) 
 
 def editResource(request, id):
@@ -142,14 +148,17 @@ def editResource(request, id):
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
-            resource = requests.put(end_point+'editarConfiguracion', json=data) 
+            resource = requests.put(end_point+'editarRecursoConfiguracion', json=data) 
             resource = resource.content.decode('utf-8')
             resource = json.loads(resource)
-            return redirect('recursos')
+            return redirect('recursosEnConfiguracion/'+idConfiguration)
     return render(request, 'editResource.html', {"recurso":resource})
 
 def deleteResource(request, id):
-    id = {"id":id}
-    print(id)
-    requests.delete(end_point+'eliminarResource', json=id)   
-    return redirect('recursos')
+    global idCategory
+    global idConfiguration
+    idResource = id
+    data = {"idCategoria":idCategory, "idConfiguracion":idConfiguration, "idRecurso":idResource}
+    print(data)
+    requests.delete(end_point+'eliminarRecursoConfiguracion', json=data)   
+    return redirect('recursosEnConfiguracion/'+idConfiguration)

@@ -10,8 +10,8 @@ path('configuraciones/<str:id>', views.getConfigurations, name='configuraciones'
 path('crearConfiguracion', views.createConfiguration, name='crearConfiguracion'),
 path('editarConfiguracion/<str:id>', views.editConfiguration, name='editarConfiguracion'),
 path('eliminarConfiguracion/<str:id>', views.deleteConfiguration, name='eliminarConfiguracion'),
-path('recursosEnCategoria/<str:id>', views.getResources, name='recursosEnCategoria'), #El name sirve para acceder a una url
-path('agregarRecurso', views.addResource, name='agregarRecurso'),
+path('recursosEnConfiguracion/<str:id>', views.getResources, name='recursosEnConfiguracion'), #El name sirve para acceder a una url
+path('agregarRecursoConfiguracion', views.addResource, name='agregarRecursoConfiguracion'),
 #path('editarRecurso/<str:id>', views.editResource, name='editarRecurso'),
-path('eliminarRecurso/<str:id>', views.deleteResource, name='eliminarRecurso'),
+path('eliminarRecursoConfiguracion/<str:id>', views.deleteResource, name='eliminarRecursoConfiguracion'),
 ]

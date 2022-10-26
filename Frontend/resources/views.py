@@ -5,6 +5,7 @@ import json
 from .forms import FormResource
 end_point='http://127.0.0.1:5000/'
 
+############################ RESOURCES ############################
 def getResources(request):
     global resources
     resources = requests.get(end_point+'recursos')
@@ -15,8 +16,6 @@ def getResources(request):
     return render(request, 'getResources.html', resources)
     #return render(request, 'getResources.html', context)
 
-
-############################ RESOURCEs ############################
 def createResource(request):
     form = FormResource(request.POST)
     if request.method == "POST":

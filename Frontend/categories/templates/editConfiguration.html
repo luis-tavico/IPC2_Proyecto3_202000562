@@ -15,7 +15,7 @@
             {% csrf_token %}
             <div class="mb-3">
                 <label for="" class="form-label">ID</label>
-                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID", value="{{ configuracion.id }}">
+                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID", value="{{ configuracion.id }}" readonly>
                 <label for="" class="form-label">Nombre</label>
                 <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre", value="{{ configuracion.nombre }}">
                 <label for="" class="form-label">Descripcion</label>

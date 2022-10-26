@@ -1,0 +1,52 @@
+{% extends "headerCustomers.html" %}
+
+{% block title %} Instancias {% endblock %}
+
+{% block container %}
+
+<div class="card">
+    <div class="card-header">
+        Editar Cliente
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos del Cliente</h4>
+
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="" class="form-label">ID</label>
+                <input type="text" class="form-control" name="id" id="" aria-describedby="helpId" placeholder="ID", value="{{ instancia.id }}" readonly>
+                <label for="" class="form-label">ID Configuracion</label>
+                <input type="text" class="form-control" name="idConfiguracion" id="" aria-describedby="helpId" placeholder="ID configuracion", value="{{ instancia.idConfiguracion }}" readonly>
+                <label for="" class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" id="" aria-describedby="helpId" placeholder="Nombre", value="{{ instancia.nombre }}">
+                <label for="" class="form-label">Fecha Inicio</label>
+                <input type="text" class="form-control" name="fechaInicio" id="" aria-describedby="helpId" placeholder="Fecha Inicio", value="{{ instancia.fechaInicio }}">
+                <div class="mb-3">
+                    <label for="" class="form-label">Estado</label>
+                    <select class="form-select" name="estado" id="">
+                        {% if instancia.estado == "Vigente" %}
+                        <option selected>Vigente</option>
+                        <option>Cancelada</option>
+                        {% elif instancia.estado == "Cancelada" %}
+                        <option>Vigente</option>
+                        <option selected>Cancelada</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <label for="" class="form-label">Fecha Final</label>
+                <input type="text" class="form-control" name="fechaFinal" id="" aria-describedby="helpId" placeholder="Fecha Final", value="{{ instancia.fechaFinal }}">
+            </div>
+            
+            <input name="" id="" class="btn btn-success" type="submit" value="Aceptar">
+            <a name="" id="" class="btn btn-danger" href="{% url 'instancias' instancia.nitCliente %}" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+</div>
+
+{% endblock %}

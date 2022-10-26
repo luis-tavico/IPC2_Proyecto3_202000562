@@ -4,7 +4,42 @@
 
 {% block container %}
 
-<h2>Consumos</h2>
+<div class="card">
+    <div class="card-header">
+        <!--<a name="" id="" class="btn btn-success" href="{% url 'crearRecurso' %}" role="button">Crear Nuevo Recurso</a>-->
+        <a name="" id="" class="btn btn-success" href="#" role="button">Crear Nuevo Consumo</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Consumos</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">NIT Cliente</th>
+                        <th scope="col">ID Instancia</th>
+                        <th scope="col">Tiempo Consumido</th>
+                        <th scope="col">Fecha y Hora</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for consumo in consumos %}
+                    <tr>
+                        <td>{{ consumo.nitCliente }}</td>
+                        <td>{{ consumo.idInstancia }}</td>
+                        <td>{{ consumo.tiempo }}</td>
+                        <td>{{ consumo.fechaHora }}</td>
+                        <td>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 

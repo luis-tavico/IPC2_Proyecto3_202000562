@@ -26,7 +26,6 @@ def createCustomer(request):
             customer = customer.content.decode('utf-8')
             customer = json.loads(customer)
             return redirect('clientes')
-    #return render(request, 'newCustomer.html') 
     return render(request, 'createCustomer.html') 
 
 def editCustomer(request, id):
@@ -48,8 +47,8 @@ def deleteCustomer(request, nit):
     return redirect('clientes')
 
 def search_customer(nit):
-    ctm = customers["clientes"]
-    for customer in ctm:
+    ctms = customers["clientes"]
+    for customer in ctms:
         if customer["nit"] == nit:
             return customer
 
@@ -66,11 +65,13 @@ def getInstances(request, nit):
     return render(request, 'getInstances.html', instances)
 
 def createInstance(request):
-    form = FormCustomer(request.POST)
+    global nitCustomer
+    form = FormInstance(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
-            data["idCliente"] = nitCustomer
+            data["nitCliente"] = nitCustomer
+            print(data)
             customer = requests.post(end_point+'crearInstancia', json=data)
             customer = customer.content.decode('utf-8')
             customer = json.loads(customer)
@@ -78,16 +79,22 @@ def createInstance(request):
     return render(request, 'createInstance.html', {"nitCliente":nitCustomer}) 
 
 def editInstance(request, id):
-    customer = search_customer(id)
-    form = FormCustomer(request.POST)
+    global nitCustomer
+    instance = search_instance(id)
+    instance["nitCliente"] = nitCustomer
+    print(instance)
+    form = FormInstance(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
-            customer = requests.put(end_point+'editarCliente', json=data) 
+            data["nitCliente"] = nitCustomer
+            print("--->")
+            customer = requests.put(end_point+'editarInstancia', json=data) 
             customer = customer.content.decode('utf-8')
             customer = json.loads(customer)
-            return redirect('clientes')
-    return render(request, 'editCustomer.html', {"cliente":customer})
+            return redirect('instancias/'+nitCustomer)
+            
+    return render(request, 'editInstance.html', {"instancia":instance})
 
 def deleteInstance(request, nit):
     nit = {"id":nit}
@@ -95,11 +102,12 @@ def deleteInstance(request, nit):
     requests.delete(end_point+'eliminarCliente', json=nit)   
     return redirect('clientes')
 
-def search_instance(nit):
-    ctm = customers["clientes"]
-    for customer in ctm:
-        if customer["nit"] == nit:
-            return customer
+def search_instance(id):
+    global instances
+    ints = instances["instancias"]
+    for instance in ints:
+        if instance["id"] == id:
+            return instance
 
 """def newCustomer(request):
     form = FormCategory(request.POST)

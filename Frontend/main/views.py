@@ -4,8 +4,7 @@ import requests
 import json
 from lxml import etree
 import xml.etree.ElementTree as ET
-from .forms import FormPathConfigurations
-from .forms import FormPathConsumptions
+from .forms import FormPathConfigurations, FormPathConsumptions
 end_point='http://127.0.0.1:5000/'
 
 def mainMenu(request):
@@ -19,8 +18,16 @@ def loadFileConfiguration(request):
             file_xml = etree.parse(path["ruta"])
             content = etree.tostring(file_xml, encoding='utf8', method='xml')
             requests.post(end_point+'archivoConfiguracion', data=content)
-            return redirect('recursos')
+            return redirect('inicio')
     return render(request, 'fileConfiguration.html')
 
 def loadFileConsumption(request):
+    form = FormPathConsumptions(request.POST)
+    if request.method == "POST":
+        if form.is_valid():
+            path = form.cleaned_data
+            file_xml = etree.parse(path["ruta"])
+            content = etree.tostring(file_xml, encoding='utf8', method='xml')
+            requests.post(end_point+'archivoConsumos', data=content)
+            return redirect('inicio')
     return render(request, 'fileConsumption.html')
