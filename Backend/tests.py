@@ -1,4 +1,4 @@
-from datetime import datetime
+"""from datetime import datetime
 import re
 
 def extractDate(text):
@@ -23,4 +23,4 @@ def extractDate(text):
 d = extractDate("El 21/08/2020 fue un dia muy cansado, a las 13:45 horas yo ya estaba descansando.")
 
 date_time = d.strftime("%d/%m/%Y %H:%M")
-print("date:",date_time)
+print("date:",date_time)"""

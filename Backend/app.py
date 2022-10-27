@@ -16,8 +16,8 @@ db = DataBase()
 def file_configuration():
     xml_content = request.get_data()
     xml_content = xml_content.decode('UTF-8')
-    db.readConfigurationFile(xml_content)
-    return jsonify({"mensaje": "Recibido"}), 200
+    message = db.readConfigurationFile(xml_content)
+    return jsonify({"mensaje": message}), 200
 
 ######################## LOAD FILE CONSUMPTIONS ####################################
 @app.route("/archivoConsumos", methods=["POST"])
@@ -310,3 +310,8 @@ def generate_Invoice():
             return jsonify({"mensaje": "No se encontraron fechas"}), 400
     else:
         return jsonify({"mensaje": "No se encontraron fechas"}), 400
+
+@app.route("/facturas")
+def get_bills():
+    bills = db.getBills()
+    return jsonify({"facturas":bills}), 200

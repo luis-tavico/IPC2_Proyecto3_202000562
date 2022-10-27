@@ -11,7 +11,7 @@
     <div class="card-body">
         <h4 class="card-title">Recursos</h4>
         <div class="table-responsive">
-            <table class="table table-primary">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
@@ -34,9 +34,8 @@
                         <td>{{ recurso.tipo }}</td>
                         <td>{{ recurso.valorXhora }}</td>     
                         <td>
-                            <a name="" id="" class="btn btn-info" href="{% url 'editarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-pen-to-square"></i></a>
-                            |
-                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button"><i class="fa-solid fa-trash-can"></i></a>
+                            <a name="" id="" class="btn btn-info" href="{% url 'editarRecurso' recurso.id %}" role="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eliminarRecurso' recurso.id %}" role="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eliminar"><i class="fa-solid fa-trash-can"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -45,10 +44,17 @@
             </table>
         </div>
     </div>
+    <div class="card-footer text-muted">
+    </div>
 </div>
 
 {% endblock %}
 
 {% block script %}
+
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
 
 {% endblock %}

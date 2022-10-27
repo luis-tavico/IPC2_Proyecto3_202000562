@@ -11,10 +11,16 @@ class DataBase:
         self.customers = []
         self.consumptions = []
         self.bills = []
+        self.numberbill = 1000
         self.loadData()
 
     ################################ READ FILE CONFIGURATIONS ################################
     def readConfigurationFile(self, xml_content):
+        quantityResources = 0
+        quantityCategories = 0
+        quantityConfigurations = 0
+        quantityCustomers = 0
+        quantityInstances = 0
         fileConfigurations = ET.fromstring(xml_content)
 
         listResources = fileConfigurations.find('listaRecursos')
@@ -28,6 +34,7 @@ class DataBase:
                 valuexHour = resource.find('valorXhora').text
                 self.resources.append({"id":idResource, "nombre":nameResourse, "abreviatura":abbreviationResource,
                 "metrica":metricsResource, "tipo":typeResource, "valorXhora":valuexHour})
+                quantityResources += 1
 
         listCategories = fileConfigurations.find('listaCategorias')
         if listCategories != None:
@@ -49,8 +56,10 @@ class DataBase:
                                 quantityResource = resourcesConfiguration.find(".//recurso[@id='"+idResource+"']").text
                                 resources.append({"id":idResource, "cantidad":quantityResource})
                         configurations.append({"id":idConfiguration, "nombre":nameConfiguration, "descripcion":descriptionConfiguration, "recursos":resources})
+                        quantityConfigurations += 1
                 self.categories.append({"id":idCategory, "nombre":nameCategory, "descripcion":descriptionCategory, "cargaTrabajo":workLoadCategory, "configuraciones":configurations})
-        
+                quantityCategories += 1
+
         customerList = fileConfigurations.find('listaClientes')
         if customerList != None:
             for customer in customerList:
@@ -75,8 +84,10 @@ class DataBase:
                         else:
                             dateEnd = ""
                         instances.append({"id":idInstance, "idConfiguracion":idConfiguration, "nombre":nameInstance, "fechaInicio":dateStart, "estado":state, "facturado":False, "fechaFinal":dateEnd})
+                        quantityInstances += 1
                 self.customers.append({"nit": nitCustomer, "nombre": nameCustomer, "direccion": addresCustomer, "correoElectronico": emailCustomer, 
                 "usuario": userCustomer, "clave": keyCustomer, "instancias":instances})
+                quantityCustomers += 1
 
         listConsumptions = fileConfigurations.find('listadoConsumos')
         if listConsumptions != None:
@@ -87,6 +98,8 @@ class DataBase:
                 dateAndHour = consumption.find('fechaHora').text
                 self.consumptions.append({"nitCliente":idCustomer, "idInstancia":idInstance,
                                         "tiempo":time, "fechaHora":dateAndHour})
+        message = str(quantityResources)+" recursos, "+str(quantityCategories)+" categorias, "+str(quantityCustomers)+" clientes, agregados exitosamente"
+        return message
 
     ################################ READ FILE CONSUMPTIONS ################################
     def readConsumptionFile(self, xml_content):
@@ -465,9 +478,11 @@ class DataBase:
         return self.consumptions  
 
 ################################ BILLS ################################  
-    def generateInvoice(self, dateStart, dateEnd):
-        values = []
+    #instance["facturado"] = True
+    #self.saveData()
+    def generateInvoice(self, dateStart, dateEnd):     
         for consumption in self.consumptions:
+            resourcesConsumed = []
             nitCustomer = consumption["nitCliente"]
             idInstance = consumption["idInstancia"]
             for customer in self.customers:
@@ -477,7 +492,6 @@ class DataBase:
                         if instance["id"] == idInstance:
                             print(instance["facturado"])
                             if instance["facturado"] == False:
-                                print("entro")
                                 if instance["estado"] == "Cancelada":    
                                     if instance["fechaInicio"] >= dateStart and instance["fechaFinal"] <= dateEnd:
                                         for category in self.categories:
@@ -488,23 +502,35 @@ class DataBase:
                                                     for resourceInConfiguration in resourcesInConfiguration:
                                                         for resource in self.resources:
                                                             if resource["id"] == resourceInConfiguration["id"]:
-                                                                values.append({"valorXhora":resource["valorXhora"], "tiempo":consumption["tiempo"]})
+                                                                resourcesConsumed.append([{"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"]}])
                                                                 break
-                                        #instance["facturado"] = True
-            
+                                                    break                                                       
                                 else:
-                                    if instance["fechaInicio"] >= dateStart and instance["fechaInicio"] <= dateEnd:
-                                        #instance["facturado"] = True
-                                        pass
-                                
-                                #self.saveData()
+                                    if instance["fechaInicio"] >= dateStart and instance["fechaInicio"] <= dateEnd:                                       
+                                        for category in self.categories:
+                                            configurations = category["configuraciones"]
+                                            for configuration in configurations:
+                                                if configuration["id"] == instance["idConfiguracion"]:
+                                                    resourcesInConfiguration = configuration["recursos"]
+                                                    for resourceInConfiguration in resourcesInConfiguration:
+                                                        for resource in self.resources:
+                                                            if resource["id"] == resourceInConfiguration["id"]:
+                                                                resourcesConsumed.append([{"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"]}])
+                                                                break
+                                                    break
                             break
                     break
-            bill = {"nitCliente":nitCustomer, "idInstancia":idInstance, "fecha":dateEnd, "r":values}
+            self.numberbill += 1
+            number = "F-"+str(self.numberbill)
+            bill = {"numero":number, "nitCliente":nitCustomer, "idInstancia":idInstance, "fecha":dateEnd, "consumos":resourcesConsumed}
             self.bills.append(bill)
         print(self.bills)
         return True
 
+    def getBills(self):
+        return self.bills
+
+################################ FUNCTIONS ################################  
     def extractDate(self, text):
         date = re.findall(r'(\d{2})/(\d{2})/(\d{4})', text)
         if len(date) > 0:

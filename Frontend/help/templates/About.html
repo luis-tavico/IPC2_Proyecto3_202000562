@@ -1,0 +1,39 @@
+{% extends "headerHelp.html" %}
+
+{% block title %} Ayuda {% endblock %}
+
+{% block container %}
+
+<div class="m-0 row justify-content-center">
+    <div class="card mb-3" style="max-width: 700px;">
+    <div class="card-header"></div>
+    <div class="row g-1">
+        <div class="col-md-4 d-flex align-items-center">
+            {% load static %}
+            <img src="{% static 'images/information.png' %}" class="rounded mx-auto d-block" alt="image" width="175" height="175">
+        </div>
+        <div class="col-md-8">
+        <div class="card-body">
+            <h5 class="card-title">Acerca De</h5>
+            <p class="card-text">Pagina web creada por: Pedro Luis Pu Tavico<br>
+                Carnet: 202000562<br>
+                CUI: 3004359830101<br>
+                Correo Electronico: luistavico99@gmail.com
+            </p>
+            <p class="card-text"><small class="text-muted">version 1.0.0</small></p>
+        </div>
+        </div>
+    </div>
+    <div class="card-footer text-muted"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+<!--<p>Pagina web creada por Pedro Luis Pu Tavico - Carnet: 202000562 - CUI: 3004359830101 - Ingenieria en Ciencias y Sistemas - Ing. Estuardo Zapeta - Aux. Jose
+    email: luistavico99@gmail.com
+</p>-->
