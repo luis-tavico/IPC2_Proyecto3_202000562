@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import re
 from datetime import datetime
 from bill import Bill
+from reportResource import Report
 import os
 
 class DataBase:
@@ -558,6 +559,80 @@ class DataBase:
             for bill in self.bills:
                 newBill = Bill()
                 newBill.generateBill(bill)
+
+        elif option.lower() == "Analisis de Recursos".lower(): 
+            for consumption in self.consumptions:
+                rscs = {}
+                nitCustomer = consumption["nitCliente"]
+                idInstance = consumption["idInstancia"]
+                for customer in self.customers:
+                    if customer["nit"] == nitCustomer:
+                        nameCustomer = customer["nombre"]
+                        addresCustomer = customer["direccion"]
+                        instances = customer["instancias"]
+                        for instance in instances:  
+                            if instance["id"] == idInstance:
+                                subtotal = 0
+                                if instance["estado"] == "Cancelada":   
+                                    if instance["fechaInicio"] >= dateStart and instance["fechaFinal"] <= dateEnd:
+                                        for category in self.categories:
+                                            configurations = category["configuraciones"]
+                                            for configuration in configurations:
+                                                if configuration["id"] == instance["idConfiguracion"]:
+                                                    resourcesInConfiguration = configuration["recursos"]
+                                                    for resourceInConfiguration in resourcesInConfiguration:
+                                                        for resource in self.resources:
+                                                            if resource["id"] == resourceInConfiguration["id"]:
+                                                                amount = float(float(resourceInConfiguration["cantidad"])*float(resource["valorXhora"])*float(consumption["tiempo"]))
+                                                                subtotal += amount
+                                                                amount = round(amount, 2)
+                                                                if resource["id"] in rscs:
+                                                                    a = rscs[resource["id"]]
+                                                                    a += amount
+                                                                    rscs[resource["id"]] = a
+                                                                else:
+                                                                    rscs[resource["id"]] = amount
+                                                                break
+                                                    break                                              
+                                else:
+                                    if instance["fechaInicio"] >= dateStart and instance["fechaInicio"] <= dateEnd:                                       
+                                        for category in self.categories:
+                                            configurations = category["configuraciones"]
+                                            for configuration in configurations:
+                                                if configuration["id"] == instance["idConfiguracion"]:
+                                                    resourcesInConfiguration = configuration["recursos"]
+                                                    for resourceInConfiguration in resourcesInConfiguration:
+                                                        for resource in self.resources:
+                                                            if resource["id"] == resourceInConfiguration["id"]:
+                                                                amount = float(float(resourceInConfiguration["cantidad"])*float(resource["valorXhora"])*float(consumption["tiempo"]))
+                                                                subtotal += amount
+                                                                amount = round(amount, 2)
+                                                                if resource["id"] in rscs:
+                                                                    a = rscs[resource["id"]]
+                                                                    a += amount
+                                                                    rscs[resource["id"]] = a
+                                                                else:
+                                                                    rscs[resource["id"]] = amount
+                                                                break
+                                                    break
+                                break
+                        break
+            
+            previousValue = 0
+            rv = ""
+            ri = ""
+            print(rscs)
+            for resource in rscs:
+                value = rscs[resource]
+                if value > previousValue:
+                    rv = value
+                    ri = resource
+                previousValue = value
+            dateE = dateEnd.strftime("%d/%m/%Y")
+            dateS = dateStart.strftime("%d/%m/%Y")
+            r = {"fechaInicio":dateS, "fechaFinal":dateE, "id":ri}
+            newReport = Report()
+            newReport.generateReport(r)
 
 ################################ BILLS ################################  
     def getBills(self):
