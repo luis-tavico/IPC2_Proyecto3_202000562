@@ -1,10 +1,12 @@
 #from re import I
 from datetime import datetime
+from tkinter import N
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import DataBase
 import xml.etree.ElementTree as ET
 import re
+from flask import send_file
 
 app = Flask(__name__)
 CORS(app)
@@ -17,15 +19,15 @@ def file_configuration():
     xml_content = request.get_data()
     xml_content = xml_content.decode('UTF-8')
     message = db.readConfigurationFile(xml_content)
-    return jsonify({"mensaje": message}), 200
+    return jsonify({"mensaje": message}), 201
 
 ######################## LOAD FILE CONSUMPTIONS ####################################
 @app.route("/archivoConsumos", methods=["POST"])
 def file_Consumptions():
     xml_content = request.get_data()
     xml_content = xml_content.decode('UTF-8')
-    db.readConsumptionFile(xml_content)
-    return jsonify({"mensaje": "Recibido"}), 200
+    message = db.readConsumptionFile(xml_content)
+    return jsonify({"mensaje": message}), 201
 
 ######################## RESOURCES ####################################
 @app.route("/recursos")
@@ -79,7 +81,6 @@ def create_category():
 @app.route("/editarCategoria", methods=["PUT"])
 def update_category():
     data = request.get_json()
-    print(data)
     response = db.updateCategory(data)
     if response:
         return jsonify({"mensaje": "¡Categoria actualizada exitosamente!"}), 200
@@ -95,6 +96,7 @@ def delete_category():
         return jsonify({"mensaje": "¡Categoria eliminada exitosamente!"}), 200
     else:
         return jsonify({"mensaje": "¡Error!"}), 400
+
 ######################## CONFIGURATIONS ####################################
 @app.route("/configuraciones", methods=["POST"])
 def get_configurations():
@@ -181,7 +183,6 @@ def delete_resource_in_configuration():
 @app.route("/clientes")
 def get_customers():
     customers = db.getCustomers()
-    print(customers)
     return jsonify({"clientes":customers}), 200
 
 @app.route("/crearCliente", methods=["POST"])
@@ -220,7 +221,6 @@ def get_instances():
     nitCustomer = request.get_json()
     nitCustomer = nitCustomer["nitCliente"]
     instances = db.getInstances(nitCustomer)
-    print(instances)
     return jsonify({"instancias":instances}), 200
 
 @app.route("/crearInstancia", methods=["POST"])
@@ -240,7 +240,6 @@ def create_instance():
         dateE = datetime.strptime(dateEnd, '%d/%m/%Y').date()
         data["fechaInicio"] = dateS
         data["fechaFinal"] = dateE
-    print(data)
     response = db.createInstance(data, nitCustomer)
     if response:
         return jsonify({"mensaje": "¡Instancia creada exitosamente!"}), 201
@@ -287,10 +286,11 @@ def get_consumptions():
     consumptions = db.getConsumptions()
     return jsonify({"consumos":consumptions}), 200
 
-######################## BILLS ####################################
-@app.route("/generarFactura", methods=["POST"])
-def generate_Invoice():
+############################ GENERATE ########################################
+@app.route("/generar", methods=["POST"])
+def generate():
     data = request.get_json()
+    option = data.pop("opcion")
     dateStart = data["fechaInicio"]
     dateEnd = data["fechaFinal"]
     dateStart = re.findall(r'(\d{2})/(\d{2})/(\d{4})', dateStart)
@@ -302,16 +302,33 @@ def generate_Invoice():
         dateEnd = '/'.join(dateEnd)
         dateS = datetime.strptime(dateStart, '%d/%m/%Y').date()
         dateE = datetime.strptime(dateEnd, '%d/%m/%Y').date()
-        print(dateS, dateE)
-        response = db.generateInvoice(dateS, dateE)
-        if response:
-            return jsonify(request.get_json()), 201
-        else:
-            return jsonify({"mensaje": "No se encontraron fechas"}), 400
-    else:
-        return jsonify({"mensaje": "No se encontraron fechas"}), 400
+        db.generate(option, dateS, dateE)
+        return jsonify({"mensaje": "¡Reporte(s) generado(s) exitosamente!"}), 201
 
+############################ BILLS ########################################
 @app.route("/facturas")
 def get_bills():
     bills = db.getBills()
     return jsonify({"facturas":bills}), 200
+
+@app.route("/factura")
+def get_bill():
+    data = request.get_json()
+    numberInvoice = data.pop("numero")
+    response = db.getBill(numberInvoice)
+    if response:
+        return jsonify({"mensaje": "¡Factura encontrada!"}), 200
+    else:
+        return jsonify({"mensaje": "¡Error! No se encontro la factura."}), 400
+
+######################## Documentation ####################################
+@app.route("/documentacion")
+def get_document():
+    db.getDocument()
+    return jsonify({"mensaje":"¡Documentacion abierta en el explorador!"}), 200
+
+######################## Data ####################################
+@app.route("/consultarDatos")
+def get_Data():
+    data = db.getData()
+    return jsonify(data), 200

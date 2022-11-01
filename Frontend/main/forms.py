@@ -1,7 +1,7 @@
 from django import forms
 
 class FormPathConfigurations(forms.Form):
-    ruta = forms.CharField(label='ruta')
+    file = forms.FileField()
 
 class FormPathConsumptions(forms.Form):
-    ruta = forms.CharField(label='ruta')
+    file = forms.FileField()

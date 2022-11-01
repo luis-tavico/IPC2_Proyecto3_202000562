@@ -13,5 +13,4 @@ def getConsumptions(request):
     consumptions = consumptions.content.decode('utf-8')
     consumptions = json.loads(consumptions)
     #resources = resources['recursos']
-    print("----->", consumptions)
     return render(request, 'getConsumptions.html', consumptions)

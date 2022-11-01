@@ -11,10 +11,7 @@ def getResources(request):
     resources = requests.get(end_point+'recursos')
     resources = resources.content.decode('utf-8')
     resources = json.loads(resources)
-    #resources = resources['recursos']
-    print("----->", resources)
     return render(request, 'getResources.html', resources)
-    #return render(request, 'getResources.html', context)
 
 def createResource(request):
     form = FormResource(request.POST)
@@ -41,7 +38,6 @@ def editResource(request, id):
 
 def deleteResource(request, id):
     id = {"id":id}
-    print(id)
     requests.delete(end_point+'eliminarRecurso', json=id)   
     return redirect('recursos')
 

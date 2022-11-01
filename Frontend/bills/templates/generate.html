@@ -1,0 +1,52 @@
+{% extends "headerGenerate.html" %}
+
+{% block title %} Generar {% endblock %}
+
+{% block container %}
+
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Aviso</strong> {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        Generar Reporte
+    </div>
+    <div class="card-body">
+
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="" class="form-label">Seleccione una opcion</label>
+                <select class="form-select" name="opcion" id="">
+                    <option>Facturas</option>
+                    <option>Analisis de Categorias y Configuraciones</option>
+                    <option>Analisis de Recursos</option>
+                </select>
+            </div>
+            <label for="" class="form-label">Desde Fecha:</label>
+            <input type="text" class="mb-3 form-control" name="fechaInicio" id="" aria-describedby="helpId" placeholder="dd/mm/yyyy">
+            <label for="" class="form-label">Hasta Fecha:</label>
+            <input type="text" class="form-control" name="fechaFinal" id="" aria-describedby="helpId" placeholder="dd/mm/yyyy">
+            <br/>
+            <input name="" id="" class="btn btn-success" type="submit" value="Generar">
+            <a name="" id="" class="btn btn-danger" href="{% url 'inicio' %}" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+</div>
+
+{% block script %}
+
+{% endblock %}
+
+{% endblock %}

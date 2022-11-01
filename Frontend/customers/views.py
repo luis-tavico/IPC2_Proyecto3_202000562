@@ -42,7 +42,6 @@ def editCustomer(request, id):
 
 def deleteCustomer(request, nit):
     nit = {"id":nit}
-    print(nit)
     requests.delete(end_point+'eliminarCliente', json=nit)   
     return redirect('clientes')
 
@@ -61,7 +60,6 @@ def getInstances(request, nit):
     instances = requests.post(end_point+'instancias', json=nit)
     instances = instances.content.decode('utf-8')
     instances = json.loads(instances)
-    print("----->",instances)
     return render(request, 'getInstances.html', instances)
 
 def createInstance(request):
@@ -71,7 +69,6 @@ def createInstance(request):
         if form.is_valid():
             data = form.cleaned_data
             data["nitCliente"] = nitCustomer
-            print(data)
             customer = requests.post(end_point+'crearInstancia', json=data)
             customer = customer.content.decode('utf-8')
             customer = json.loads(customer)
@@ -82,13 +79,11 @@ def editInstance(request, id):
     global nitCustomer
     instance = search_instance(id)
     instance["nitCliente"] = nitCustomer
-    print(instance)
     form = FormInstance(request.POST)
     if request.method == "POST":
         if form.is_valid():
             data = form.cleaned_data
             data["nitCliente"] = nitCustomer
-            print("--->")
             customer = requests.put(end_point+'editarInstancia', json=data) 
             customer = customer.content.decode('utf-8')
             customer = json.loads(customer)
@@ -98,7 +93,6 @@ def editInstance(request, id):
 
 def deleteInstance(request, nit):
     nit = {"id":nit}
-    print(nit)
     requests.delete(end_point+'eliminarCliente', json=nit)   
     return redirect('clientes')
 
@@ -108,12 +102,3 @@ def search_instance(id):
     for instance in ints:
         if instance["id"] == id:
             return instance
-
-"""def newCustomer(request):
-    form = FormCategory(request.POST)
-    if request.method == "POST":
-        if form.is_valid():
-            print("si")
-            data = form.cleaned_data
-            print(data)
-    return render(request, 'newCategory.html') """

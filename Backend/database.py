@@ -2,6 +2,8 @@ from lxml import etree
 import xml.etree.ElementTree as ET
 import re
 from datetime import datetime
+from bill import Bill
+import os
 
 class DataBase:
 
@@ -98,11 +100,13 @@ class DataBase:
                 dateAndHour = consumption.find('fechaHora').text
                 self.consumptions.append({"nitCliente":idCustomer, "idInstancia":idInstance,
                                         "tiempo":time, "fechaHora":dateAndHour})
-        message = str(quantityResources)+" recursos, "+str(quantityCategories)+" categorias, "+str(quantityCustomers)+" clientes, agregados exitosamente"
+        message = str(quantityResources)+" recursos, "+str(quantityCategories)+" categorias y "+str(quantityCustomers)+" clientes fueron agregados exitosamente."
+        self.saveData()
         return message
 
     ################################ READ FILE CONSUMPTIONS ################################
     def readConsumptionFile(self, xml_content):
+        quantityConsumptions = 0
         listConsumptions = ET.fromstring(xml_content)
 
         for consumption in listConsumptions:
@@ -114,6 +118,11 @@ class DataBase:
             dateAndHour = self.extractDateAndTime(dateAndHour)
             self.consumptions.append({"nitCliente":idCustomer, "idInstancia":idInstance,
                                     "tiempo":time, "fechaHora":dateAndHour})
+            quantityConsumptions += 1
+        
+        message = str(quantityConsumptions)+" consumos fueron agregados exitosamente."
+        self.saveData()
+        return message
 
     ################################ LOAD DATA ################################
     def loadData(self):
@@ -212,15 +221,17 @@ class DataBase:
                         nameInstance = ET.SubElement(instance, 'nombre')
                         nameInstance.text = intc["nombre"]
                         dateStartInstance = ET.SubElement(instance, 'fechaInicio')
-                        #date = date.strftime("%d/%m/%Y")
-                        dateStartInstance.text = intc["fechaInicio"].strftime("%d/%m/%Y")
+                        if intc["fechaInicio"].__class__ == str:
+                            dateStartInstance.text = intc["fechaInicio"]                       
+                        else:
+                            dateStartInstance.text = intc["fechaInicio"].strftime("%d/%m/%Y")
                         stateInstance = ET.SubElement(instance, 'estado')
                         stateInstance.text = intc["estado"]
                         dateEndInstance = ET.SubElement(instance, 'fechaFinal')
-                        if intc["fechaFinal"] != "":
-                            dateEndInstance.text = intc["fechaFinal"].strftime("%d/%m/%Y")
-                        else:
+                        if intc["fechaFinal"].__class__ == str:
                             dateEndInstance.text = intc["fechaFinal"]
+                        else:
+                            dateEndInstance.text = intc["fechaFinal"].strftime("%d/%m/%Y")             
             database.append(listCustomers)
 
         if len(self.consumptions) > 0:
@@ -232,7 +243,10 @@ class DataBase:
                 time = ET.SubElement(consumption, 'tiempo')
                 time.text = cmpt["tiempo"]
                 dateAndHour = ET.SubElement(consumption, 'fechaHora')
-                dateAndHour.text = cmpt["fechaHora"].strftime("%d/%m/%Y %H:%M")
+                if cmpt["fechaHora"].__class__ == datetime:
+                    dateAndHour.text = cmpt["fechaHora"].strftime("%d/%m/%Y %H:%M")
+                else:
+                    dateAndHour.text = cmpt["fechaHora"]
             database.append(listConsumptions)
 
         file_xml.write("./database.xml")
@@ -477,58 +491,92 @@ class DataBase:
     def getConsumptions(self):
         return self.consumptions  
 
-################################ BILLS ################################  
-    #instance["facturado"] = True
-    #self.saveData()
-    def generateInvoice(self, dateStart, dateEnd):     
-        for consumption in self.consumptions:
-            resourcesConsumed = []
-            nitCustomer = consumption["nitCliente"]
-            idInstance = consumption["idInstancia"]
-            for customer in self.customers:
-                if customer["nit"] == nitCustomer:
-                    instances = customer["instancias"]
-                    for instance in instances:  
-                        if instance["id"] == idInstance:
-                            print(instance["facturado"])
-                            if instance["facturado"] == False:
-                                if instance["estado"] == "Cancelada":    
-                                    if instance["fechaInicio"] >= dateStart and instance["fechaFinal"] <= dateEnd:
-                                        for category in self.categories:
-                                            configurations = category["configuraciones"]
-                                            for configuration in configurations:
-                                                if configuration["id"] == instance["idConfiguracion"]:
-                                                    resourcesInConfiguration = configuration["recursos"]
-                                                    for resourceInConfiguration in resourcesInConfiguration:
-                                                        for resource in self.resources:
-                                                            if resource["id"] == resourceInConfiguration["id"]:
-                                                                resourcesConsumed.append([{"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"]}])
-                                                                break
-                                                    break                                                       
-                                else:
-                                    if instance["fechaInicio"] >= dateStart and instance["fechaInicio"] <= dateEnd:                                       
-                                        for category in self.categories:
-                                            configurations = category["configuraciones"]
-                                            for configuration in configurations:
-                                                if configuration["id"] == instance["idConfiguracion"]:
-                                                    resourcesInConfiguration = configuration["recursos"]
-                                                    for resourceInConfiguration in resourcesInConfiguration:
-                                                        for resource in self.resources:
-                                                            if resource["id"] == resourceInConfiguration["id"]:
-                                                                resourcesConsumed.append([{"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"]}])
-                                                                break
-                                                    break
-                            break
-                    break
-            self.numberbill += 1
-            number = "F-"+str(self.numberbill)
-            bill = {"numero":number, "nitCliente":nitCustomer, "idInstancia":idInstance, "fecha":dateEnd, "consumos":resourcesConsumed}
-            self.bills.append(bill)
-        print(self.bills)
-        return True
+################################ GENERATE ################################  
+    def generate(self, option, dateStart, dateEnd):    
+        if option.lower() == "Facturas".lower(): 
+            for consumption in self.consumptions:
+                resourcesConsumed = []
+                nitCustomer = consumption["nitCliente"]
+                idInstance = consumption["idInstancia"]
+                for customer in self.customers:
+                    if customer["nit"] == nitCustomer:
+                        nameCustomer = customer["nombre"]
+                        addresCustomer = customer["direccion"]
+                        instances = customer["instancias"]
+                        for instance in instances:  
+                            if instance["id"] == idInstance:
+                                if instance["facturado"] == False:
+                                    subtotal = 0
+                                    if instance["estado"] == "Cancelada":   
+                                        if instance["fechaInicio"] >= dateStart and instance["fechaFinal"] <= dateEnd:
+                                            for category in self.categories:
+                                                configurations = category["configuraciones"]
+                                                for configuration in configurations:
+                                                    if configuration["id"] == instance["idConfiguracion"]:
+                                                        resourcesInConfiguration = configuration["recursos"]
+                                                        for resourceInConfiguration in resourcesInConfiguration:
+                                                            for resource in self.resources:
+                                                                if resource["id"] == resourceInConfiguration["id"]:
+                                                                    amount = float(float(resourceInConfiguration["cantidad"])*float(resource["valorXhora"])*float(consumption["tiempo"]))
+                                                                    subtotal += amount
+                                                                    amount = round(amount, 2)
+                                                                    resourcesConsumed.append({"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"], "importe":amount})
+                                                                    break
+                                                        break
+                                            instance["facturado"] = True
+                                            self.saveData()
+                                            self.numberbill += 1
+                                            number = "F-"+str(self.numberbill)
+                                            date =   dateEnd.strftime("%d/%m/%Y")
+                                            bill = {"numero":number, "nitCliente":nitCustomer, "nombreCliente":nameCustomer, "direccionCliente":addresCustomer, "idInstancia":idInstance, "estado":"Cancelada", "fecha":date, "total":round(subtotal,2), "consumos":resourcesConsumed}
+                                            self.bills.append(bill)                                                  
+                                    else:
+                                        if instance["fechaInicio"] >= dateStart and instance["fechaInicio"] <= dateEnd:                                       
+                                            for category in self.categories:
+                                                configurations = category["configuraciones"]
+                                                for configuration in configurations:
+                                                    if configuration["id"] == instance["idConfiguracion"]:
+                                                        resourcesInConfiguration = configuration["recursos"]
+                                                        for resourceInConfiguration in resourcesInConfiguration:
+                                                            for resource in self.resources:
+                                                                if resource["id"] == resourceInConfiguration["id"]:
+                                                                    amount = float(float(resourceInConfiguration["cantidad"])*float(resource["valorXhora"])*float(consumption["tiempo"]))
+                                                                    subtotal += amount
+                                                                    amount = round(amount, 2)
+                                                                    resourcesConsumed.append({"idRecurso":resource["id"], "nombre":resource["nombre"], "valorXhora":resource["valorXhora"], "cantidad":resourceInConfiguration["cantidad"], "tiempo":consumption["tiempo"], "importe":amount})
+                                                                    break
+                                                        break
+                                            instance["facturado"] = True
+                                            self.saveData()
+                                            self.numberbill += 1
+                                            number = "F-"+str(self.numberbill)
+                                            date =   dateEnd.strftime("%d/%m/%Y")
+                                            bill = {"numero":number, "nitCliente":nitCustomer, "nombreCliente":nameCustomer, "direccionCliente":addresCustomer, "idInstancia":idInstance, "estado":"Vigente", "fecha":date, "total":round(subtotal,2), "consumos":resourcesConsumed}
+                                            self.bills.append(bill)
+                                break
+                        break
+            for bill in self.bills:
+                newBill = Bill()
+                newBill.generateBill(bill)
 
+################################ BILLS ################################  
     def getBills(self):
         return self.bills
+
+################################ REPORTS ################################  
+    def getBill(self, numberInvoice):
+        for bill in self.bills:
+            if bill["numero"] == numberInvoice:
+                #name_pdf = "factura_"+numberInvoice+".pdf"
+                name_pdf = "factura-"+numberInvoice+".pdf"
+                os.system(name_pdf)
+                return True
+        return False
+
+################################ DOCUMENT ################################  
+    def getDocument(self):
+        os.system("Documentacion.pdf")
+        return True
 
 ################################ FUNCTIONS ################################  
     def extractDate(self, text):
@@ -538,6 +586,11 @@ class DataBase:
             date = '/'.join(date)
             date = datetime.strptime(date, '%d/%m/%Y').date()
         return date
+
+################################ DATA #################################
+    def getData(self):
+        data = {"recursos":self.resources, "categorias":self.categories, "clientes":self.customers, "consumos":self.consumptions}
+        return data
 
     def extractDateAndTime(self, text):
         date = re.findall(r'(\d{2})/(\d{2})/(\d{4})', text)
@@ -577,64 +630,3 @@ class DataBase:
         else: time += str(minute)+" minutos "
 
         return time
-
-
-
-
-
-"""def saveNewResource(self, rsc):
-    file_xml = ET.parse("./database.xml")
-    database = file_xml.getroot() 
-
-    listResources = database.find('listaRecursos')
-    if listResources == None:
-        listResources = ET.Element('listaRecursos')
-        database.append(listResources)
-
-    resource = ET.SubElement(listResources, 'recurso')
-    resource.set("id", rsc["id"])
-    nameResource = ET.SubElement(resource, 'nombre')
-    nameResource.text = rsc["nombre"]
-    abbreviationResource = ET.SubElement(resource, 'abreviatura')
-    abbreviationResource.text = rsc["abreviatura"]
-    metricsResource = ET.SubElement(resource, 'metrica')
-    metricsResource.text = rsc["metrica"]
-    typeResource = ET.SubElement(resource, 'tipo')
-    typeResource.text = rsc["tipo"]
-    valueResource = ET.SubElement(resource, 'valorXhora')
-    valueResource.text = str(rsc["valorXhora"])
-
-    file_xml.write("./database.xml")
-
-def saveUpdateResource(self, rsc):
-    file_xml = ET.parse("./database.xml")
-    database = file_xml.getroot() 
-
-    for listResources in database.findall('listaRecursos'):
-        for resource in listResources:
-            idResource = resource.attrib['id']
-            if idResource == rsc["id"]:
-                nameResource = resource.find('nombre')
-                nameResource.text = rsc["nombre"]
-                abbreviationResource = resource.find('abreviatura')
-                abbreviationResource.text = rsc["abreviatura"]
-                metricsResource = resource.find('metrica')
-                metricsResource.text = rsc["metrica"]
-                typeResource = resource.find('tipo')
-                typeResource.text = rsc["tipo"]
-                valueResource = resource.find('valorXhora')
-                valueResource.text = rsc["valorXhora"]
-
-                file_xml.write(self.pathFileConfigurations)
-
-def saveDeleteResource(self, rsc):
-    file_xml = ET.parse(self.pathFileConfigurations)
-    fileConfigurations = file_xml.getroot() 
-
-    for listResources in fileConfigurations.findall('listaRecursos'):
-        for resource in listResources:
-            idResource = resource.attrib['id']
-            if idResource == rsc["id"]:
-                listResources.remove(resource)
-
-                file_xml.write(self.pathFileConfigurations)"""
